@@ -1,6 +1,8 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
+import { UserProvider } from "@/context/UserContext";
+
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
@@ -27,6 +29,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-br">
+      <UserProvider>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
@@ -36,6 +39,7 @@ export default function RootLayout({
         </main>
         <Footer />
       </body>
+      </UserProvider>
     </html>
   );
 }
