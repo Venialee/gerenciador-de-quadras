@@ -6,7 +6,20 @@ import GenericInput from "@/components/GenericInput";
 import { useState } from "react";
 //import CampiSelector from "@/components/GenericSelector";
 
+export interface ReservaInterface {
+    idReserva: number,
+    idQuadra: number,
+    //idEvento: number,
+    //idAdmin: number,
+    //idUsuario: number,
+    dataReserva: string,
+    horaInicio: number,
+    horafim: number,
+    status: string
+}
+
 export default function AdminPage() {
+
     const [inputNome, setinputNome] = useState<string>("");
     const [inputCapacidade, setInputCapacidade] = useState<number>(0);
     const [endereco, setEndereco] = useState({
@@ -41,10 +54,10 @@ export default function AdminPage() {
         })
     }
 
-    const getIdCidade = () => {
-        const cidade = document.getElementById("qInputIdCidade") as HTMLInputElement;
-        return cidade.value
-    }
+    // const getIdCidade = () => {
+    //     const cidade = document.getElementById("qInputIdCidade") as HTMLInputElement;
+    //     return cidade.value
+    // }
 
     const handleEnderecoChange = (field: string, value: string) => {
         setEndereco((prev) => ({ ...prev, [field]: value }));
@@ -67,62 +80,40 @@ export default function AdminPage() {
         resetFileds();
     }
 
+    const [data, setData] = useState<string>("");
+    const [horaInicio, setHoraInicio] = useState<number>(0);
+    const [horaFim, setHoraFim] = useState<number>(0);
+    const [status, setStatus] = useState<string>("");
+    const [reservas, setReservas] = useState<ReservaInterface[]>([]);
+
+    const handleClick = () => {
+        const reserva: ReservaInterface = {
+            idQuadra: 1,
+            idReserva: reservas.length + 1,
+            dataReserva: data,
+            horaInicio: horaInicio,
+            horafim: horaFim,
+            status: status
+        }
+        setReservas((prev) => [...prev, reserva]);
+        console.log("Quadras cadastradas:", [...reservas, reserva]);
+    }
+
     return (
-        <Box>
-            <h1>Registrar Quadra</h1>
-            <div className="py-4">
-                <GenericInput
-                    id="qInputNome"
-                    label="Nome"
-                    type="text"
-                    value={inputNome}
-                    onChange={setinputNome}
-                />
-                <GenericInput
-                    id="qInputCapacidade"
-                    label="Capacidade"
-                    type="number"
-                    value={inputCapacidade}
-                    onChange={setInputCapacidade}
-                />
-                <GenericInput id="qInputLogradouro"
-                    label="Logradouro"
-                    type="text"
-                    value={endereco.logradouro}
-                    onChange={(value) => handleEnderecoChange("logradouro", value)} />
-                <GenericInput id="qInputBairro"
-                    label="Bairro"
-                    type="text"
-                    value={endereco.bairro}
-                    onChange={(value) => handleEnderecoChange("bairro", value)} />
-                <GenericInput id="qInputCep"
-                    label="CEP"
-                    type="text"
-                    value={endereco.cep}
-                    onChange={(value) => handleEnderecoChange("cep", value)} />
-                <GenericInput
-                    id="qInputNumero"
-                    label="Número"
-                    type="text"
-                    value={endereco.numero}
-                    onChange={(value) => handleEnderecoChange("numero", value)} />
-                <GenericInput
-                    id="qInputComplemento"
-                    label="Complemento"
-                    type="text"
-                    value={endereco.complemento}
-                    onChange={(value) => handleEnderecoChange("complemento", value)} />
-                <GenericInput
-                    id="qInputIdCidade"
-                    label="ID da Cidade"
-                    type="text"
-                    value={endereco.idCidade}
-                    onChange={(value) => handleEnderecoChange("idCidade", value)} />
-                {/* <CampiSelector onChange={() => { }} /> */}
-            </div>
+        <>
+            <Box>
+            <h1>Registrar Reserva</h1>
             <div>
                 <Button content="Cadastrar Quadra" onClick={() => handleCadastrarQuadra()} />
             </div>
         </Box>
+        <Box>
+            <GenericInput type="text" label="Data" value={data} onChange={setData} />
+            <GenericInput type="number" label="Hora Inicio" value={horaInicio} onChange={setHoraInicio} />
+            <GenericInput type="number" label="Hora Fim" value={horaFim} onChange={setHoraFim} />
+            <GenericInput type="text" label="Status" value={status} onChange={setStatus} />
+            <Button content="Reservar" onClick={() => handleClick()} />
+         </Box>
+        </>
     )
 }

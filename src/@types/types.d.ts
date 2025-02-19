@@ -5,15 +5,23 @@ export interface QuadraInterface {
     capacidade: number;
 }
 
-export interface reservaInterface {
-    idReserva: number;
-    idQuadra: number;
-    idEvento: number;
-    idAdmin: number;
+export interface UsuarioInterface {
     idUsuario: number;
-    //Rever os tipos abaixo
-    dataReserva: string;
-    horaInicio: string;
-    horaFim: string;
-    status: string;
+    idTelefone: number;
+    nome: string;
+    email: string;
+    senha: string;
+    cpf: string;
+}
+
+export interface ReservaInterface {
+    idReserva: number,
+    idQuadra: number,
+    //idEvento: number,
+    //idAdmin: number,
+    //idUsuario: number,
+    dataReserva: string,
+    horaInicio: string,
+    horaFim: string,
+    status: string
 }
