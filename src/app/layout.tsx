@@ -2,6 +2,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
 import { UserProvider } from "@/context/UserContext";
+import { ReservaProvider } from "@/context/ReservaContext";
 
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
@@ -29,17 +30,19 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-br">
-      <UserProvider>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Header />
-        <main>
-          {children}
-        </main>
-        <Footer />
+        <UserProvider>
+          <ReservaProvider>
+            <Header />
+            <main>
+              {children}
+            </main>
+            <Footer />
+          </ReservaProvider>
+        </UserProvider>
       </body>
-      </UserProvider>
     </html>
   );
 }

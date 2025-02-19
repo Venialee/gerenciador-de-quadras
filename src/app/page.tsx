@@ -1,4 +1,4 @@
-import { QuadraInterface } from "@/@types/types";
+'use client'
 
 export default function Home() {
   return (

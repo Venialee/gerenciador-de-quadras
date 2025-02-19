@@ -6,7 +6,7 @@ import { UsuarioInterface } from "@/@types/types";
 
 interface UserContextType {
     currentUser: UsuarioInterface | null;
-    users: UsuarioInterface[]; 
+    users: UsuarioInterface[];
     setUsers: React.Dispatch<React.SetStateAction<UsuarioInterface[]>>;
     handleRegisterUser: (user: UsuarioInterface) => void;
     handleLogin: (email: string, senha: string) => void;
@@ -45,6 +45,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         const user = users.find((user) => user.email === email && user.senha === senha);
         if (user) {
             setCurrentUser(user);
+            console.log(user);
         }
         else console.log("Usuário não encontrado");
     };
@@ -54,13 +55,13 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
 
     return (
-        <UserContext.Provider value={{ 
-            users, 
-            currentUser, 
+        <UserContext.Provider value={{
+            users,
+            currentUser,
             handleRegisterUser,
             handleLogin,
             handleLogout,
-            setUsers 
+            setUsers
         }}>
             {children}
         </UserContext.Provider>
@@ -70,7 +71,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 export const useUsers = () => {
     const context = useContext(UserContext);
     if (!context) {
-      throw new Error('Usuários devem ser gerenciados com o UserProvider');
+        throw new Error('Usuários devem ser gerenciados com o UserProvider');
     }
     return context;
 };

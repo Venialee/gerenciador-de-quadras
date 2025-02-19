@@ -21,7 +21,7 @@ export interface ReservaInterface {
     //idAdmin: number,
     //idUsuario: number,
     dataReserva: string,
-    horaInicio: number,
-    horaFim: number,
+    horaInicio: string,
+    horaFim: string,
     status: string
 }
