@@ -5,6 +5,10 @@ export interface QuadraInterface {
     capacidade: number;
 }
 
+export interface TelefoneInterface {
+    idTelefone: number;
+    telefone: number;
+}
 export interface UsuarioInterface {
     idUsuario: number;
     idTelefone: number;
@@ -12,6 +16,16 @@ export interface UsuarioInterface {
     email: string;
     senha: string;
     cpf: string;
+}
+
+export interface AdminInterface {
+    idAdmin: number;
+    chaveDeAcesso: string;
+}
+
+export interface AlunoInterface {
+    idAluno: number;
+    matricula: number;
 }
 
 export interface ReservaInterface {

@@ -54,11 +54,6 @@ export default function AdminPage() {
         })
     }
 
-    // const getIdCidade = () => {
-    //     const cidade = document.getElementById("qInputIdCidade") as HTMLInputElement;
-    //     return cidade.value
-    // }
-
     const handleEnderecoChange = (field: string, value: string) => {
         setEndereco((prev) => ({ ...prev, [field]: value }));
     };

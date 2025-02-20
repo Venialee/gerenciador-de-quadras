@@ -2,43 +2,56 @@
 
 import React, { createContext, ReactNode, useContext, useState } from "react";
 
-import { UsuarioInterface } from "@/@types/types";
+import { AlunoInterface, UsuarioInterface } from "@/@types/types";
 
 interface UserContextType {
     currentUser: UsuarioInterface | null;
     users: UsuarioInterface[];
+    alunos: AlunoInterface[];
     setUsers: React.Dispatch<React.SetStateAction<UsuarioInterface[]>>;
     handleRegisterUser: (user: UsuarioInterface) => void;
+    handleRegisterAluno: (aluno: AlunoInterface) => void;
     handleLogin: (email: string, senha: string) => void;
     handleLogout: () => void;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
-export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    const teste: UsuarioInterface = {
+export const telefone1 = {
+    idTelefone: 1,
+    telefone: 29999495960
+}
+
+const someUsers: UsuarioInterface[] = [
+    {
         idUsuario: 1,
-        idTelefone: 1,
-        nome: "teste",
-        email: "teste@teste.com",
-        senha: "teste",
-        cpf: "34534534"
-    }
-
-    const teste2: UsuarioInterface = {
+        idTelefone: telefone1.idTelefone,
+        nome: "Maria",
+        email: "maria@gmail.com",
+        senha: "123maria456",
+        cpf: "19219219270"
+    },
+    {
         idUsuario: 2,
-        idTelefone: 2,
-        nome: "marilia",
-        email: "ma@gmail.com",
-        senha: "teste",
-        cpf: "543436665"
+        idTelefone: telefone1.idTelefone,
+        nome: "João",
+        email: "joao@gmail.com",
+        senha: "123joao456",
+        cpf: "20220220270"
     }
+]
 
-    const [users, setUsers] = useState<UsuarioInterface[]>([teste, teste2]);
+export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+    const [users, setUsers] = useState<UsuarioInterface[]>([...someUsers]);
+    const [alunos, setAlunos] = useState<AlunoInterface[]>([]);
     const [currentUser, setCurrentUser] = useState<UsuarioInterface | null>(null);
 
     const handleRegisterUser = (user: UsuarioInterface) => {
         setUsers((prev) => [...prev, user]);
+    }
+
+    const handleRegisterAluno = (aluno: AlunoInterface) => {
+        setAlunos((prev) => [...prev, aluno]);
     }
 
     const handleLogin = (email: string, senha: string) => {
@@ -57,8 +70,10 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     return (
         <UserContext.Provider value={{
             users,
+            alunos,
             currentUser,
             handleRegisterUser,
+            handleRegisterAluno,
             handleLogin,
             handleLogout,
             setUsers
