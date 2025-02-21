@@ -1,3 +1,5 @@
+'use client'
+
 interface GenericInput {
     id?: string,
     type: any,

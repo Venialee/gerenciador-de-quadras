@@ -4,18 +4,13 @@ export interface QuadraInterface {
     nome: string;
     capacidade: number;
 }
-
-export interface TelefoneInterface {
-    idTelefone: number;
-    telefone: number;
-}
 export interface UsuarioInterface {
     idUsuario: number;
-    idTelefone: number;
+    telefone: bigint;
     nome: string;
     email: string;
     senha: string;
-    cpf: string;
+    CPF: string;
 }
 
 export interface AdminInterface {

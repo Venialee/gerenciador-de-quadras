@@ -1,14 +1,21 @@
+// _app.tsx
 'use client'
 
-import { useUsers } from "@/context/UserContext";
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useUsers } from '@/context/UserContext';
 
-export default function Home() {
+export default function MyApp() {
   const { currentUser } = useUsers();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!currentUser) {
+      router.push('/login');
+    }
+  }, [currentUser, router]);
 
   return (
-    <>
-      <h1>Gerenciador de Quadras</h1>
-      <h2>Olá, {currentUser ? currentUser.nome : 'Guest'}</h2>
-    </>
-  );
+    <h1>Olá, {currentUser ? currentUser.nome : 'Visitante'}</h1>
+  )
 }
