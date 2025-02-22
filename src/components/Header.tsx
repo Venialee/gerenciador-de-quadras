@@ -1,15 +1,30 @@
-'use client'
+'use client';
 
 import Link from "next/link";
+import { useUsers } from "@/context/UserContext";
 
 export default function Header() {
+    const { handleLogout, currentUser } = useUsers();
+
     return (
-        <header>
-            <Link href="/">Home</Link>
-            <Link href="/admin">Admin</Link>
-            <Link href="/login">Login</Link>
-            <Link href="/cadastrar">Cadastrar</Link>
-            <Link href="/reserva">Reserva</Link>
+        <header className="flex gap-4 border-red-500 border-b-2 border-rounded p-4">
+            <nav className="flex gap-4">
+                <Link href="/">Home</Link>
+                <Link href="/reserva">Reservas</Link>
+
+                {currentUser ? (
+                    <>
+                        {currentUser.tipo === 'admin' && <Link href="/admin">Admin</Link>}
+                        <Link href="/reserva">Fazer Reserva</Link>
+                        <span className="cursor-pointer" onClick={handleLogout}>Logout</span>
+                    </>
+                ) : (
+                    <>
+                        <Link href="/cadastrar">Cadastre-se</Link>
+                        <Link href="/login">Login</Link>
+                    </>
+                )}
+            </nav>
         </header>
-    )
+    );
 }

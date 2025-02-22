@@ -8,7 +8,7 @@ export async function GET() {
 
     const usuariosComTelefone = usuarios.map(usuario => ({
         ...usuario,
-        telefone: usuario.telefone.toString()  // Converte o BigInt para string
+        telefone: usuario.telefone.toString()
     }));
 
     return NextResponse.json(usuariosComTelefone);
@@ -16,28 +16,59 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
     try {
-        const { email, senha } = await req.json();
+        const {
+            nome,
+            sobrenome,
+            email,
+            senha,
+            CPF,
+            telefone,
+            matricula
+        } = await req.json();
 
-        if (!email || !senha) {
-            return NextResponse.json({ message: 'Email e senha são obrigatórios' }, { status: 400 });
+        if (!nome || !sobrenome || !email || !senha || !CPF || !telefone) {
+            return NextResponse.json({ message: "Todos os campos são obrigatórios" }, { status: 400 });
         }
 
-        const user = await prisma.usuario.findFirst({
-            where: {
-                email: email
-            },
+        if (typeof telefone !== "string" || !/^\d+$/.test(telefone)) {
+            return NextResponse.json({ message: "Número de telefone inválido" }, { status: 400 });
+        }
+
+        const telefoneBigInt = BigInt(telefone);
+
+        const novoUsuario = await prisma.usuario.create({
+            data: {
+                nome,
+                sobrenome,
+                email,
+                senha,
+                CPF,
+                telefone: telefoneBigInt
+            }
         });
 
-        if (user && user.senha === senha) {
-            return NextResponse.json({
-                email: user.email,
-                nome: user.nome,
-                idUsuario: user.idUsuario,
-            }, { status: 200 });
-        } else {
-            return NextResponse.json({ message: 'Usuário ou senha incorretos' }, { status: 401 });
+        let novoAluno = null;
+
+        if (matricula) {
+            novoAluno = await prisma.aluno.create({
+                data: {
+                    matricula: matricula,
+                    idAluno: novoUsuario.idUsuario
+                }
+            });
         }
-    } catch (error) {
+
+        const responseUsuario = {
+            ...novoUsuario,
+            telefone: novoUsuario.telefone.toString()
+        };
+
+        return NextResponse.json({
+            usuario: responseUsuario,
+            aluno: novoAluno
+        }, { status: 201 });
+    }
+    catch (error) {
         console.error('Erro ao processar a requisição:', error);
         return NextResponse.json({ message: 'Erro interno no servidor' }, { status: 500 });
     }

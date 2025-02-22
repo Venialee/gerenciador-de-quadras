@@ -3,6 +3,17 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
+export async function GET() {
+    const usuarios = await prisma.usuario.findMany();
+
+    const usuariosComTelefone = usuarios.map(usuario => ({
+        ...usuario,
+        telefone: usuario.telefone.toString()  // Converte o BigInt para string
+    }));
+
+    return NextResponse.json(usuariosComTelefone);
+}
+
 export async function POST(req: NextRequest) {
     try {
         const { email, senha } = await req.json();
@@ -15,13 +26,19 @@ export async function POST(req: NextRequest) {
             where: {
                 email: email
             },
+            include: {
+                aluno: true,
+                administrador: true
+            }
         });
 
         if (user && user.senha === senha) {
             return NextResponse.json({
+                idUsuario: user.idUsuario,
                 email: user.email,
                 nome: user.nome,
-                idUsuario: user.idUsuario,
+                sobrenome: user.sobrenome,
+                tipo: user.administrador ? "admin" : user.aluno ? "aluno" : "usuario",
             }, { status: 200 });
         } else {
             return NextResponse.json({ message: 'Usuário ou senha incorretos' }, { status: 401 });
