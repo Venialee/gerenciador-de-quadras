@@ -1,36 +1,110 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Gerenciador de Quadras
 
-## Getting Started
+## Pré-requisitos
+- Docker instalado
+- Node.js (v18+)
+- NestJS CLI instalado (`npm i -g @nestjs/cli`)
 
-First, run the development server:
+---
 
+## 🐳 Executar Banco de Dados PostgreSQL com Docker
+
+### 1. Construir a imagem
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+docker build -t custom-postgres .
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Iniciar o container
+```bash
+docker run -d --name my-postgres -p 5431:5432 custom-postgres
+```
+> **Nota:** O banco estará acessível em `localhost:5431`
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🚀 Executar Aplicação NestJS
 
-## Learn More
+### 1. Instalar dependências
+```bash
+npm install
+```
 
-To learn more about Next.js, take a look at the following resources:
+### 2. Executar migrações do Prisma
+```bash
+npx prisma migrate dev
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 3. Iniciar servidor em modo desenvolvimento
+```bash
+npm run start:dev
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## 🔍 Acessar Banco de Dados PostgreSQL
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 1. Listar containers em execução
+```bash
+docker ps
+```
+> Anote o **CONTAINER ID** do container `my-postgres`
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### 2. Conectar ao PostgreSQL via terminal
+```bash
+docker exec -it <CONTAINER_ID> psql -U postgres -d postgres
+```
+
+### 3. Comandos úteis no PSQL
+
+| Comando      | Descrição                         |
+| ------------ | --------------------------------- |
+| `\l`         | Listar todos os bancos de dados   |
+| `\dt`        | Listar tabelas                    |
+| `\d+ tabela` | Ver estrutura de uma tabela       |
+| `\q`         | Sair do terminal PSQL             |
+
+---
+
+## ⚙️ Variáveis de Ambiente
+
+Certifique-se de configurar no arquivo `.env`:
+(já está configurado)
+```env
+DATABASE_URL="postgresql://postgres:root@localhost:5431/postgres?schema=public"
+```
+
+---
+
+## 🛠️ Estrutura do Banco (Prisma)
+
+O schema do banco é gerenciado pelo Prisma em:
+
+```bash
+prisma/schema.prisma
+```
+
+---
+
+## ❌ Troubleshooting
+
+**Erro de conexão com o banco:**
+
+- Verifique se o container está rodando (`docker ps -a`)
+- Confira o mapeamento de portas (`-p 5431:5432`)
+- Valide as credenciais no `.env`
+
+**Problemas nas migrações:**
+
+- Execute `npx prisma generate` antes das migrações
+- Verifique o histórico de migrações com `npx prisma migrate status`
+
+---
+
+### Principais melhorias:
+- Organização hierárquica com seções claras
+- Adição de tabela de comandos úteis do PSQL
+- Notas explicativas e troubleshooting
+- Ícones visuais para melhor navegação
+- Formatação consistente em markdown
+- Informações complementares sobre Prisma e variáveis de ambiente
+- Instruções de pré-requisitos explícitas
