@@ -37,25 +37,27 @@ export default function Reservas() {
     } = useReserva();
 
     const handleClick = async () => {
-        const localStorageUser = localStorage.getItem('currentUser');
+        const localStorageUser = localStorage.getItem("currentUser");
 
         if (localStorageUser) {
             const user = JSON.parse(localStorageUser);
 
-            const newReserva: ReservaInterface = {
+            const newReserva = {
                 idQuadra: 1,
                 idUsuario: user.idUsuario,
                 dataReserva: data,
                 horaInicio: horaInicio,
                 horaFim: horaFim,
-                status: 0
-            }
+                status: 0,
+                nomeEvento: nomeEvento || null,
+                descricaoEvento: descricaoEvento || null,
+                organizadorEvento: organizadorEvento || null,
+            };
 
             await handleCadastrarReserva(newReserva);
-            //console.log("Quadras cadastradas:", [...reservas, newReserva]);
             resetFileds();
         }
-    }
+    };
 
     const resetFileds = () => {
         setHoraFim("");

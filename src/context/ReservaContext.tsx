@@ -77,30 +77,30 @@ export function ReservaProvider({ children }: { children: ReactNode }) {
     const [reservasAprovadas, setReservasAprovadas] = useState<ReservaInterface[]>([]);
     const [reservasRejeitadas, setReservasRejeitadas] = useState<ReservaInterface[]>([]);
 
-    const handleCadastrarReserva = async (reserva: ReservaInterface) => {
+    const handleCadastrarReserva = async (novaReserva: ReservaInterface) => {
         try {
             const res = await fetch("/api/reserva", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ ...reserva }),
+                body: JSON.stringify(novaReserva),
             });
 
             if (!res.ok) {
                 throw new Error("Erro ao cadastrar reserva");
             }
 
-            const data = await res.json();
-            console.log("reserva registrada:", data)
+            const reservaCriada = await res.json();
+            console.log("Reserva criada com sucesso:", reservaCriada);
 
+            // Atualiza o estado com a nova reserva, se necessário
+            setReservas((prev) => [...prev, reservaCriada]);
 
-            setReservas((prev) => [...prev, data.reserva]);
+        } catch (error) {
+            console.error("Erro ao cadastrar reserva:", error);
         }
-        catch (error) {
-            console.error("Erro no registro de reserva:", error);
-        }
-    }
+    };
 
     const handleAprovarReserva = (reserva: ReservaInterface) => {
         const isAlreadyApproved = reservasAprovadas.some(r => r.idReserva === reserva.idReserva);

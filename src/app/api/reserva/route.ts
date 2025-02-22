@@ -10,55 +10,58 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
     try {
+        const body = await req.json();
+        console.log("Dados recebidos:", body);
+
         const {
+            idQuadra,
+            idUsuario,
+            dataReserva,
             horaInicio,
             horaFim,
-            dataReserva,
             status,
             nomeEvento,
             descricaoEvento,
-            organizadorEvento,
-            idUsuario
-        } = await req.json();
+            organizadorEvento
+        } = body;
 
-        if (!horaInicio || !horaFim || !dataReserva) {
-            return NextResponse.json({ message: "Prrencha os campos obrigatórios" }, { status: 400 });
+        if (!idQuadra || !idUsuario || !dataReserva || !horaInicio || !horaFim) {
+            return NextResponse.json({ message: "Preencha todos os campos obrigatórios" }, { status: 400 });
         }
 
-        const timeHoraInicio = new Date(`1970-01-01T${horaInicio}:00Z`);
-        const timeHoraFim = new Date(`1970-01-01T${horaFim}:00Z`);
-
-        let novoEvento = null;
-
-        const novaReserva = await prisma.reserva.create({
-            data: {
-                horaInicio: timeHoraInicio,
-                horaFim: timeHoraFim,
-                dataReserva,
-                status: 1,
-                idQuadra: 1,
-                idUsuario,
-                ...(novoEvento ? { idEvento: 1 } : {})
-            }
-        });
+        let idEvento: number | null = null;
 
         if (nomeEvento && descricaoEvento && organizadorEvento) {
-            novoEvento = await prisma.evento.create({
+            const eventoCriado = await prisma.evento.create({
                 data: {
                     nome: nomeEvento,
                     descricao: descricaoEvento,
-                    organizador: organizadorEvento
-                }
+                    organizador: organizadorEvento,
+                },
             });
+
+            idEvento = eventoCriado.idevento;
         }
 
-        return NextResponse.json({
-            reserva: novaReserva,
-            evento: novoEvento
-        }, { status: 201 });
-    }
-    catch (error) {
-        console.error('Erro ao processar a requisição:', error);
-        return NextResponse.json({ message: 'Erro interno no servidor' }, { status: 500 });
+        const reserva = await prisma.reserva.create({
+            data: {
+                idQuadra,
+                idUsuario,
+                dataReserva: new Date(dataReserva),
+                horaInicio: new Date(`1970-01-01T${horaInicio}:00Z`),
+                horaFim: new Date(`1970-01-01T${horaFim}:00Z`),
+                status,
+                idEvento
+            },
+        });
+
+        return NextResponse.json(reserva, { status: 201 });
+
+    } catch (error) {
+        console.error("Erro ao processar a requisição:", error);
+        return NextResponse.json(
+            { message: "Erro interno no servidor", error: error instanceof Error ? error.message : String(error) },
+            { status: 500 }
+        );
     }
 }
