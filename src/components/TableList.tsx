@@ -10,9 +10,10 @@ interface TableListProps {
 export default function TableList({ tables }: TableListProps) {
     return (
         <>
-            {tables.map((table: TableProps, index: number) => (
-                <Table key={index} reserva={table.reserva} />
-            ))}
+            {tables.map((table, index) => {
+                console.log("Objeto reserva dentro do TableList:", table);
+                return <Table key={index} reserva={table.reserva} />;
+            })}
         </>
     );
 }

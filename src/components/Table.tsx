@@ -1,27 +1,53 @@
 import { ReservaInterface } from "@/@types/types";
 import Button from "./Button";
 import { useReserva } from "@/context/ReservaContext";
+import { useUsers } from "@/context/UserContext";
 
 export interface TableProps {
     reserva: ReservaInterface
 }
 
 export default function Table({ reserva }: TableProps) {
-    const { handleAprovarReserva, handleRejeitarReserva, handleDeleteReserva } = useReserva();
+    const { handleAlterarStatusReserva, handleDeleteReserva } = useReserva();
+    const { currentUser } = useUsers();
 
     const showButton = () => {
-        if (reserva.status === "approved") {
-            return <Button content="Cancelar" variation="red" onClick={() => handleRejeitarReserva(reserva)} />
-        } else if (reserva.status === "canceled") {
-            return <Button content="Deletar" variation="red" onClick={() => handleDeleteReserva(reserva)} />
+        if (reserva.status === 0 && currentUser?.tipo === 'admin') {
+            return (
+                <>
+                    <Button content="Aprovar reserva" variation="green" onClick={() => {
+                        handleAlterarStatusReserva(reserva, 1);
+                    }} />
+                    <Button content="Cancelar reserva" variation="red" onClick={() => {
+                        handleAlterarStatusReserva(reserva, 2);
+                    }} />
+                </>
+            );
+        } else if (reserva.status === 2) {
+            return (
+                <>
+                    <Button content="Deletar reserva" variation="red" onClick={() => {
+                        handleDeleteReserva(reserva);
+                    }} />
+                </>
+            );
+        } else {
+            return null;
         }
-        else return (
-            <>
-                <Button content="Aprovar Reserva" onClick={() => handleAprovarReserva(reserva)} />
-                <Button content="Rejeitar Reserva" variation="red" onClick={() => handleRejeitarReserva(reserva)} />
-            </>
-        )
-    }
+    };
+
+    const setReservaStatus = () => {
+        switch (reserva.status) {
+            case 0:
+                return 'Pendente';
+            case 1:
+                return 'Aprovado';
+            case 2:
+                return 'Cancelado';
+            default:
+                return 'Undefined';
+        }
+    };
 
     return (
         <div className="w-auto flex flex-col items-center m-8">
@@ -39,8 +65,23 @@ export default function Table({ reserva }: TableProps) {
                         <td className="border border-gray-400 p-2">{reserva.dataReserva}</td>
                         <td className="border border-gray-400 p-2">{reserva.horaInicio}</td>
                         <td className="border border-gray-400 p-2">{reserva.horaFim}</td>
-                        <td className="border border-gray-400 p-2">{reserva.status}</td>
+                        <td className="border border-gray-400 p-2">{setReservaStatus()}</td>
                     </tr>
+                    {reserva.idEvento !== null ?
+                        <>
+                            <tr className="border border-gray-400 p-2">
+                                <td className="w-full">Evento: {reserva.evento?.nome ?? 'N/A'}</td>
+                            </tr>
+                            <tr className="border border-gray-400 p-2">
+                                <td className="w-full">Organizador do Evento: {reserva.evento?.organizador ?? 'N/A'}</td>
+                            </tr>
+                            <tr className="border border-gray-400 p-2">
+                                <td className="w-full">Descrição: {reserva.evento?.decricao ?? 'N/A'}</td>
+                            </tr>
+                        </>
+                        :
+                        null
+                    }
                 </tbody>
             </table>
             <div className="justify-between w-full flex max-w-[371px]">

@@ -10,7 +10,6 @@ export default function Header() {
         <header className="flex gap-4 border-red-500 border-b-2 border-rounded p-4">
             <nav className="flex gap-4">
                 <Link href="/">Home</Link>
-                <Link href="/reserva">Reservas</Link>
 
                 {currentUser ? (
                     <>
