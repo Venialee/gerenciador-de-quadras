@@ -20,14 +20,12 @@ interface ReservaContextType {
     handleCadastrarReserva: (reserva: ReservaInterface) => void;
     handleDeleteReserva: (reserva: ReservaInterface) => void;
     handleAlterarStatusReserva: (reserva: ReservaInterface, status: number) => void;
+    atualizarReservas(): void
 }
 
 const ReservaContext = createContext<ReservaContextType | undefined>(undefined);
 
 export function ReservaProvider({ children }: { children: ReactNode }) {
-    // const [reservas, setReservas] = useState<ReservaInterface[]>([]);
-    // const [reservasAprovadas, setReservasAprovadas] = useState<ReservaInterface[]>([]);
-    // const [reservasCanceladas, setreservasCanceladas] = useState<ReservaInterface[]>([]);
     const [reservasPendentes, setReservasPendentes] = useState<ReservaInterface[]>([]);
     const [reservasAprovadas, setReservasAprovadas] = useState<ReservaInterface[]>([]);
     const [reservasCanceladas, setReservasCanceladas] = useState<ReservaInterface[]>([]);
@@ -45,10 +43,6 @@ export function ReservaProvider({ children }: { children: ReactNode }) {
             setReservasCanceladas(canceladas);
 
             console.log("Reservas recebidas do banco:", databaseReservas);
-
-            //setReservas(databaseReservas);
-            // setReservasAprovadas(databaseReservasAprovadas);
-            // setreservasCanceladas(databaseReservasCanceladas);
         };
 
         fetchReservas();
@@ -78,7 +72,6 @@ export function ReservaProvider({ children }: { children: ReactNode }) {
         }
     };
 
-    //responsável por apagr o registro do banco de dados
     const handleDeleteReserva = async (reserva: ReservaInterface) => {
         try {
             const res = await fetch(`/api/reserva/${reserva.idreserva}`, {
@@ -89,7 +82,6 @@ export function ReservaProvider({ children }: { children: ReactNode }) {
 
             if (res.ok) {
                 console.log("Reserva deletada com sucesso", data);
-                // Remover a reserva do estado das pendentes ou aprovadas, se ela estiver lá
                 setReservasPendentes((prev) => prev.filter((r) => r.idreserva !== reserva.idreserva));
                 setReservasAprovadas((prev) => prev.filter((r) => r.idreserva !== reserva.idreserva));
                 setReservasCanceladas((prev) => prev.filter((r) => r.idreserva !== reserva.idreserva));
@@ -124,15 +116,11 @@ export function ReservaProvider({ children }: { children: ReactNode }) {
             if (!response.ok) throw new Error(data.message);
             console.log('Reserva atualizada:', data);
 
-            // setReservas((prev) =>
-            //     prev.map((r) =>
-            //         r.idreserva === idreserva ? { ...r, status } : r
-            //     )
-            // );
-            if (status === 1) { // Aprovado
+            if (status === 1) {
                 setReservasPendentes((prev) => prev.filter((r) => r.idreserva !== idreserva));
                 setReservasAprovadas((prev) => [...prev, { ...reserva, status }]);
-            } else if (status === 2) { // Cancelado
+            }
+            else if (status === 2) {
                 setReservasPendentes((prev) => prev.filter((r) => r.idreserva !== idreserva));
                 setReservasCanceladas((prev) => [...prev, { ...reserva, status }]);
             }
@@ -140,6 +128,13 @@ export function ReservaProvider({ children }: { children: ReactNode }) {
             console.error('Erro ao atualizar reserva:', error);
         }
     };
+
+    const atualizarReservas = async () => {
+        const res = await fetch("/api/reserva");
+        const data = await res.json();
+        setReservasPendentes(data);
+    };
+
 
     return (
         <ReservaContext.Provider value={{
@@ -151,14 +146,14 @@ export function ReservaProvider({ children }: { children: ReactNode }) {
             setReservasCanceladas,
             handleCadastrarReserva,
             handleDeleteReserva,
-            handleAlterarStatusReserva
+            handleAlterarStatusReserva,
+            atualizarReservas
         }}>
             {children}
         </ReservaContext.Provider>
     );
 }
 
-//hook
 export function useReserva() {
     const context = useContext(ReservaContext);
     if (!context) throw new Error("useReserva deve ser usado com ReservaProvider");

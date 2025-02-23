@@ -15,6 +15,7 @@ export default function Header() {
                     <>
                         {currentUser.tipo === 'admin' && <Link href="/admin">Admin</Link>}
                         <Link href="/reserva">Fazer Reserva</Link>
+                        <Link href="/minhas-reservas">Minhas Reservas</Link>
                         <span className="cursor-pointer" onClick={handleLogout}>Logout</span>
                     </>
                 ) : (

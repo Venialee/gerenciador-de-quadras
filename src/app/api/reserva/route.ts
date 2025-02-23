@@ -15,7 +15,14 @@ export async function GET(request: Request) {
             }
         });
 
-        return NextResponse.json(reservas);
+        const reservasFormatadas = reservas.map(reserva => ({
+            ...reserva,
+            dataReserva: reserva.dataReserva.toISOString().split("T")[0],
+            horaInicio: reserva.horaInicio.toTimeString().split(" ")[0],
+            horaFim: reserva.horaFim.toTimeString().split(" ")[0],
+        }));
+
+        return NextResponse.json(reservasFormatadas);
     } catch (error) {
         console.error("Erro ao buscar reservas:", error);
         return NextResponse.json({ message: "Erro interno no servidor" }, { status: 500 });

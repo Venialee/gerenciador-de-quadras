@@ -48,7 +48,7 @@ export async function DELETE(req: NextApiRequest, { params }: { params: { id: st
 
 export async function PATCH(req: NextRequest, context: { params: { id: string } }) {
     try {
-        const { id } = await context.params;  // Aqui aguardamos a resolução de params
+        const { id } = await context.params;
         const { status } = await req.json();
         const idreserva = parseInt(id, 10);
 
@@ -67,4 +67,3 @@ export async function PATCH(req: NextRequest, context: { params: { id: string } 
         return NextResponse.json({ message: 'Erro ao atualizar status da reserva' }, { status: 500 });
     }
 }
-

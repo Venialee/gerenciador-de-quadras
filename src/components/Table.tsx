@@ -2,6 +2,7 @@ import { ReservaInterface } from "@/@types/types";
 import Button from "./Button";
 import { useReserva } from "@/context/ReservaContext";
 import { useUsers } from "@/context/UserContext";
+import Link from "next/link";
 
 export interface TableProps {
     reserva: ReservaInterface
@@ -23,7 +24,8 @@ export default function Table({ reserva }: TableProps) {
                     }} />
                 </>
             );
-        } else if (reserva.status === 2) {
+        }
+        else if (reserva.status === 2 && currentUser?.tipo === 'admin') {
             return (
                 <>
                     <Button content="Deletar reserva" variation="red" onClick={() => {
@@ -31,7 +33,19 @@ export default function Table({ reserva }: TableProps) {
                     }} />
                 </>
             );
-        } else {
+        }
+        else if (reserva.status === 0 && currentUser?.idUsuario === reserva.idUsuario) {
+            return (
+                <>
+                    <Link href={`/minhas-reservas/${reserva.idreserva}`} scroll={false}>
+                        <button className="bg-blue-500 text-white px-4 py-2 rounded">
+                            Editar Reserva
+                        </button>
+                    </Link>
+                </>
+            )
+        }
+        else {
             return null;
         }
     };

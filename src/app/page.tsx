@@ -6,9 +6,7 @@ import TableList from "@/components/TableList";
 
 export default function Home() {
   const {
-    reservasPendentes,
-    reservasAprovadas,
-    reservasCanceladas,
+    reservasAprovadas
   } = useReserva();
 
   const { currentUser } = useUsers();

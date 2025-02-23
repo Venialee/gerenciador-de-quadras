@@ -33,7 +33,7 @@ export interface ReservaInterface {
     dataReserva: string,
     horaInicio: string,
     horaFim: string,
-    status: number | string,
+    status: number,
     evento?: {
         nome: string,
         decricao: string,
