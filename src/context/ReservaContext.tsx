@@ -1,144 +1,159 @@
 'use client';
 
-import { createContext, useState, useContext, ReactNode } from "react";
+import {
+    fetchAllReservasFromDB,
+    fetchReservasAprovadasFromDB,
+    fetchReservasCanceladasFromDB,
+    fetchReservasPendentesFromDB
+} from "@/lib/quadraService";
+
+import { createContext, useState, useContext, ReactNode, useEffect } from "react";
 import { ReservaInterface } from "@/@types/types";
-import { quadra } from "@/app/utils/quadra";
 
 interface ReservaContextType {
-    reservas: ReservaInterface[];
-    setReservas: React.Dispatch<React.SetStateAction<ReservaInterface[]>>;
+    reservasPendentes: ReservaInterface[];
     reservasAprovadas: ReservaInterface[];
-    setReservasAprovadas: React.Dispatch<React.SetStateAction<ReservaInterface[]>>;
-    reservasRejeitadas: ReservaInterface[];
-    setReservasRejeitadas: React.Dispatch<React.SetStateAction<ReservaInterface[]>>;
+    reservasCanceladas: ReservaInterface[];
+    setReservasPendentes: (reservas: ReservaInterface[]) => void;
+    setReservasAprovadas: (reservas: ReservaInterface[]) => void;
+    setReservasCanceladas: (reservas: ReservaInterface[]) => void;
     handleCadastrarReserva: (reserva: ReservaInterface) => void;
-    handleAprovarReserva: (reserva: ReservaInterface) => void;
-    handleRejeitarReserva: (reserva: ReservaInterface) => void;
     handleDeleteReserva: (reserva: ReservaInterface) => void;
+    handleAlterarStatusReserva: (reserva: ReservaInterface, status: number) => void;
+    atualizarReservas(): void
 }
 
 const ReservaContext = createContext<ReservaContextType | undefined>(undefined);
 
-const ListaReservas: ReservaInterface[] = [
-    {
-        idQuadra: quadra.idQuadra,
-        idReserva: 1,
-        dataReserva: '2021-10-11',
-        horaInicio: '10:00',
-        horaFim: '11:00',
-        status: "pending"
-    },
-    {
-        idQuadra: quadra.idQuadra,
-        idReserva: 2,
-        dataReserva: '2021-10-12',
-        horaInicio: '11:00',
-        horaFim: '12:00',
-        status: "pending"
-    },
-    {
-        idQuadra: quadra.idQuadra,
-        idReserva: 3,
-        dataReserva: '2021-10-13',
-        horaInicio: '12:00',
-        horaFim: '13:00',
-        status: "pending"
-    },
-    {
-        idQuadra: quadra.idQuadra,
-        idReserva: 4,
-        dataReserva: '2021-10-14',
-        horaInicio: '13:00',
-        horaFim: '14:00',
-        status: "pending"
-    },
-    {
-        idQuadra: quadra.idQuadra,
-        idReserva: 5,
-        dataReserva: '2021-10-15',
-        horaInicio: '15:00',
-        horaFim: '16:00',
-        status: "pending"
-    },
-]
-
-//provider
 export function ReservaProvider({ children }: { children: ReactNode }) {
-    const [reservas, setReservas] = useState<ReservaInterface[]>([...ListaReservas]);
+    const [reservasPendentes, setReservasPendentes] = useState<ReservaInterface[]>([]);
     const [reservasAprovadas, setReservasAprovadas] = useState<ReservaInterface[]>([]);
-    const [reservasRejeitadas, setReservasRejeitadas] = useState<ReservaInterface[]>([]);
+    const [reservasCanceladas, setReservasCanceladas] = useState<ReservaInterface[]>([]);
 
-    const handleCadastrarReserva = (reserva: ReservaInterface) => {
-        if (Object.values(reserva).every(value => value !== "" && value !== '0' && value !== null)) {
-            setReservas((prev) => [...prev, reserva])
-        }
-        else console.log("Preencha todos os campos");
-    }
+    useEffect(() => {
+        const fetchReservas = async () => {
+            const databaseReservas = await fetchAllReservasFromDB();
 
-    const handleAprovarReserva = (reserva: ReservaInterface) => {
-        const isAlreadyApproved = reservasAprovadas.some(r => r.idReserva === reserva.idReserva);
-        if (!isAlreadyApproved) {
-            const reservaAprovada = { ...reserva, status: "approved" };
+            const pendentes = await fetchReservasPendentesFromDB();
+            const aprovadas = await fetchReservasAprovadasFromDB();
+            const canceladas = await fetchReservasCanceladasFromDB();
 
-            setReservas((prev) => prev.filter(r => r.idReserva !== reserva.idReserva));
-            setReservasAprovadas((prev) => [...prev, reservaAprovada]);
+            setReservasPendentes(pendentes);
+            setReservasAprovadas(aprovadas);
+            setReservasCanceladas(canceladas);
 
-            console.log("Reserva aprovada:", reservaAprovada);
+            console.log("Reservas recebidas do banco:", databaseReservas);
+        };
+
+        fetchReservas();
+    }, []);
+
+    const handleCadastrarReserva = async (novaReserva: ReservaInterface) => {
+        try {
+            const res = await fetch("/api/reserva", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(novaReserva),
+            });
+
+            if (!res.ok) {
+                throw new Error("Erro ao cadastrar reserva");
+            }
+
+            const reservaCriada = await res.json();
+            console.log("Reserva criada com sucesso:", reservaCriada);
+
+            setReservasPendentes((prev) => [...prev, reservaCriada]);
+
+        } catch (error) {
+            console.error("Erro ao cadastrar reserva:", error);
         }
     };
 
-    const handleRejeitarReserva = (reserva: ReservaInterface) => {
-        const isAlreadyRejected = reservasRejeitadas.some(r => r.idReserva === reserva.idReserva);
-        if (!isAlreadyRejected) {
-            const reservaRejeitada = { ...reserva, status: "canceled" };
+    const handleDeleteReserva = async (reserva: ReservaInterface) => {
+        try {
+            const res = await fetch(`/api/reserva/${reserva.idreserva}`, {
+                method: 'DELETE',
+            })
 
-            // Remove a reserva do array de reservas aprovadas
-            setReservasAprovadas((prev) => prev.filter(r => r.idReserva !== reserva.idReserva));
+            const data = await res.json();
 
-            // Remove a reserva do array de reservas pendentes (se ainda estiver lá)
-            setReservas((prev) => prev.filter(r => r.idReserva !== reserva.idReserva));
+            if (res.ok) {
+                console.log("Reserva deletada com sucesso", data);
+                setReservasPendentes((prev) => prev.filter((r) => r.idreserva !== reserva.idreserva));
+                setReservasAprovadas((prev) => prev.filter((r) => r.idreserva !== reserva.idreserva));
+                setReservasCanceladas((prev) => prev.filter((r) => r.idreserva !== reserva.idreserva));
+            } else {
+                console.error("Erro ao deletar reserva", data);
+                return null;
+            }
+        }
+        catch (error) {
+            console.error("Erro ao deletar reserva", error);
+            return null;
+        }
+    }
 
-            // Adiciona a reserva ao array de rejeitadas
-            setReservasRejeitadas((prev) => [...prev, reservaRejeitada]);
+    const handleAlterarStatusReserva = async (reserva: ReservaInterface, status: number) => {
+        if (!reserva || !reserva.idreserva) {
+            console.error("Erro: ID da reserva não informado corretamente.");
+            return;
+        }
 
-            console.log("Reserva rejeitada:", reservaRejeitada);
+        const idreserva = reserva.idreserva;
+        console.log("ID da reserva recebido:", idreserva);
+
+        try {
+            const response = await fetch(`/api/reserva/${idreserva}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ idreserva, status }),
+            });
+
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.message);
+            console.log('Reserva atualizada:', data);
+
+            if (status === 1) {
+                setReservasPendentes((prev) => prev.filter((r) => r.idreserva !== idreserva));
+                setReservasAprovadas((prev) => [...prev, { ...reserva, status }]);
+            }
+            else if (status === 2) {
+                setReservasPendentes((prev) => prev.filter((r) => r.idreserva !== idreserva));
+                setReservasCanceladas((prev) => [...prev, { ...reserva, status }]);
+            }
+        } catch (error) {
+            console.error('Erro ao atualizar reserva:', error);
         }
     };
 
+    const atualizarReservas = async () => {
+        const res = await fetch("/api/reserva");
+        const data = await res.json();
+        setReservasPendentes(data);
+    };
 
-    const handleDeleteReserva = (reserva: ReservaInterface) => {
-        setReservasRejeitadas((prev) => prev.filter(r => r.idReserva !== reserva.idReserva));
-    }
-
-    // const handleChangeStatus = (wantedReserva: ReservaInterface, status: string) => {
-    //     reservas.map((reserva) => {
-    //         if (reserva.idReserva === wantedReserva.idReserva) {
-    //             return { ...reserva, status: status }
-    //         }
-    //         return reserva;
-    //     })
-    //     setReservas(reservas);
-    // }
 
     return (
         <ReservaContext.Provider value={{
-            reservas,
-            setReservas,
+            reservasPendentes,
             reservasAprovadas,
+            reservasCanceladas,
+            setReservasPendentes,
             setReservasAprovadas,
+            setReservasCanceladas,
             handleCadastrarReserva,
-            handleAprovarReserva,
-            handleRejeitarReserva,
-            reservasRejeitadas,
-            setReservasRejeitadas,
-            handleDeleteReserva
+            handleDeleteReserva,
+            handleAlterarStatusReserva,
+            atualizarReservas
         }}>
             {children}
         </ReservaContext.Provider>
     );
 }
 
-//hook
 export function useReserva() {
     const context = useContext(ReservaContext);
     if (!context) throw new Error("useReserva deve ser usado com ReservaProvider");

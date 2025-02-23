@@ -4,18 +4,15 @@ export interface QuadraInterface {
     nome: string;
     capacidade: number;
 }
-
-export interface TelefoneInterface {
-    idTelefone: number;
-    telefone: number;
-}
 export interface UsuarioInterface {
-    idUsuario: number;
-    idTelefone: number;
+    idUsuario?: number;
+    telefone: string;
     nome: string;
+    sobrenome: string;
     email: string;
     senha: string;
-    cpf: string;
+    CPF: string;
+    tipo?: string;
 }
 
 export interface AdminInterface {
@@ -25,17 +22,21 @@ export interface AdminInterface {
 
 export interface AlunoInterface {
     idAluno: number;
-    matricula: number;
+    matricula: number | string;
 }
 
 export interface ReservaInterface {
-    idReserva: number,
+    idreserva: number,
     idQuadra: number,
-    //idEvento: number,
-    //idAdmin: number,
-    //idUsuario: number,
+    idEvento?: number,
+    idUsuario: number,
     dataReserva: string,
     horaInicio: string,
     horaFim: string,
-    status: string
+    status: number,
+    evento?: {
+        nome: string,
+        decricao: string,
+        organizador: string
+    }
 }
