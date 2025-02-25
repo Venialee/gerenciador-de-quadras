@@ -10,12 +10,12 @@ export default function Header() {
         <header className="flex gap-4 border-red-500 border-b-2 border-rounded p-4">
             <nav className="flex gap-4">
                 <Link href="/">Home</Link>
-                <Link href="/reserva">Reservas</Link>
 
                 {currentUser ? (
                     <>
                         {currentUser.tipo === 'admin' && <Link href="/admin">Admin</Link>}
                         <Link href="/reserva">Fazer Reserva</Link>
+                        <Link href="/minhas-reservas">Minhas Reservas</Link>
                         <span className="cursor-pointer" onClick={handleLogout}>Logout</span>
                     </>
                 ) : (

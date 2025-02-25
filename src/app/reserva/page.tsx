@@ -32,7 +32,7 @@ export default function Reservas() {
     const {
         reservas,
         reservasAprovadas,
-        reservasRejeitadas,
+        reservasCanceladas,
         handleCadastrarReserva
     } = useReserva();
 
@@ -41,10 +41,10 @@ export default function Reservas() {
 
         if (localStorageUser) {
             const user = JSON.parse(localStorageUser);
-            console.log(user)
+
             const newReserva = {
                 idQuadra: 1,
-                idUsuario: user.usuario.idUsuario,
+                idUsuario: user.idUsuario,
                 dataReserva: data,
                 horaInicio: horaInicio,
                 horaFim: horaFim,
@@ -55,6 +55,7 @@ export default function Reservas() {
             };
 
             await handleCadastrarReserva(newReserva);
+            resetFileds();
         }
     };
 
@@ -79,20 +80,6 @@ export default function Reservas() {
                 <GenericInput type="text" label="Organizador do Evento" value={organizadorEvento} onChange={setOrganizadorEvento} />
                 <Button content="Reservar" onClick={() => handleClick()} />
             </Box>
-            <div className="flex flex-row">
-                <div>
-                    <h2>Reservas Pendentes</h2>
-                    <TableList tables={reservas.map(reserva => ({ reserva }))} />
-                </div>
-                <div>
-                    <h2>Reservas Aprovadas</h2>
-                    <TableList tables={reservasAprovadas.map(reserva => ({ reserva }))} />
-                </div>
-                <div>
-                    <h2>Reservas Rejeitadas</h2>
-                    <TableList tables={reservasRejeitadas.map(reserva => ({ reserva }))} />
-                </div>
-            </div>
         </>
     )
 }
