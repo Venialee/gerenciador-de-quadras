@@ -41,10 +41,10 @@ export default function Reservas() {
 
         if (localStorageUser) {
             const user = JSON.parse(localStorageUser);
-
+            console.log(user)
             const newReserva = {
                 idQuadra: 1,
-                idUsuario: user.idUsuario,
+                idUsuario: user.usuario.idUsuario,
                 dataReserva: data,
                 horaInicio: horaInicio,
                 horaFim: horaFim,
@@ -55,7 +55,6 @@ export default function Reservas() {
             };
 
             await handleCadastrarReserva(newReserva);
-            resetFileds();
         }
     };
 
