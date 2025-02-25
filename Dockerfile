@@ -2,7 +2,7 @@
 FROM postgres:latest
 
 # Set environment variables for default database, user, and password
-ENV POSTGRES_DB=postgres
+ENV POSTGRES_DB=quadrareservas
 ENV POSTGRES_USER=postgres
 ENV POSTGRES_PASSWORD=root
 

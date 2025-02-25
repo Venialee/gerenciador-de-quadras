@@ -25,7 +25,6 @@ export async function POST(req: NextRequest) {
             telefone,
             matricula
         } = await req.json();
-
         if (!nome || !sobrenome || !email || !senha || !CPF || !telefone) {
             return NextResponse.json({ message: "Todos os campos são obrigatórios" }, { status: 400 });
         }
