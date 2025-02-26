@@ -5,6 +5,7 @@ import GenericInput from "@/components/GenericInput";
 import { useUsers } from "@/context/UserContext";
 import Link from "next/link";
 import { useState } from "react";
+import Button from "@/components/Button";
 
 export default function Login() {
     const [email, setEmail] = useState<string>("");
@@ -18,18 +19,18 @@ export default function Login() {
     }
 
     return (
-        <>
-            <h1>Login</h1>
-            <Box>
-                <form onSubmit={(e) => { handleSubmit(e) }}>
-                    <GenericInput type="text" label="Email" value={email} onChange={setEmail} />
-                    <GenericInput type="password" label="Senha" value={senha} onChange={setSenha} />
-                    <button type="submit">Entrar</button>
-                    <span className="block">
-                        <Link className="text-red-500" href="/cadastrar">Não tem uma conta? Cadastre-se!</Link>
+        <div className="min-h-screen bg-darkBlue bg-[url('/logomarca_fundo.svg')] bg-center bg-no-repeat flex justify-center items-center">
+            <div className="flex flex-col items-center w-full max-w-md p-8 rounded-lg sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl">
+                <img src="/logomarca.svg" alt="Logomarca" className="my-8 w-40 h-40 sm:w-32 sm:h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 xl:w-56 xl:h-56" />
+                <form className="flex flex-col  w-full" onSubmit={handleSubmit}>
+                    <GenericInput type="text" label="" value={email} onChange={setEmail} placeholder="Informe o seu e-mail" icon={<img src="/email.svg" alt="Ícone de email" className="h-5 w-5 text-darkBlue" />} />
+                    <GenericInput type="password" label="" value={senha} onChange={setSenha} placeholder="Digite a sua senha" icon={<img src="/senha.svg" alt="Ícone de senha" className="h-5 w-5 text-darkBlue" />} />
+                    <Button content="Entrar" variation="backgroundYellow" />
+                    <span className="block mt-4 text-center">
+                        <Link className="text-complementYellow" href="/cadastrar">Não tem uma conta? Cadastre-se!</Link>
                     </span>
                 </form>
-            </Box>
-        </>
+            </div>
+        </div>
     )
 }
