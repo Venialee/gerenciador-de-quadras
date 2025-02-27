@@ -34,9 +34,14 @@ npm install
 npx prisma migrate dev
 ```
 
-### 3. Iniciar servidor em modo desenvolvimento
+### 3. Executar seed do Prisma
 ```bash
-npm run start:dev
+npx prisma db seed
+```
+
+### 4. Iniciar servidor em modo desenvolvimento
+```bash
+npm run dev
 ```
 
 ---
@@ -68,7 +73,7 @@ docker exec -it <CONTAINER_ID> psql -U postgres -d postgres
 ## ⚙️ Variáveis de Ambiente
 
 Certifique-se de configurar no arquivo `.env`:
-(já está configurado)
+
 ```env
 DATABASE_URL="postgresql://postgres:root@localhost:5431/postgres?schema=public"
 ```
