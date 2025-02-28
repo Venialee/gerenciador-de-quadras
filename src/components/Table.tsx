@@ -16,10 +16,10 @@ export default function Table({ reserva }: TableProps) {
         if (reserva.status === 0 && currentUser?.tipo === 'admin') {
             return (
                 <>
-                    <Button content="Aprovar reserva" variation="green" onClick={() => {
+                    <Button content="Aprovar reserva" variation="backgroundYellow" onClick={() => {
                         handleAlterarStatusReserva(reserva, 1);
                     }} />
-                    <Button content="Cancelar reserva" variation="red" onClick={() => {
+                    <Button content="Cancelar reserva" variation="lightOrange" onClick={() => {
                         handleAlterarStatusReserva(reserva, 2);
                     }} />
                 </>
@@ -28,7 +28,7 @@ export default function Table({ reserva }: TableProps) {
         else if (reserva.status === 2 && currentUser?.tipo === 'admin') {
             return (
                 <>
-                    <Button content="Deletar reserva" variation="red" onClick={() => {
+                    <Button content="Deletar reserva" variation="lightOrange" onClick={() => {
                         handleDeleteReserva(reserva);
                     }} />
                 </>
