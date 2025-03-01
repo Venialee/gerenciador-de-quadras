@@ -10,7 +10,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
         const idreserva = Number(id);
 
         const reserva = await prisma.reserva.findUnique({
-            where: { idReserva: idreserva },
+            where: { idreserva: idreserva },
         });
 
         if (!reserva) {
@@ -34,7 +34,7 @@ export async function DELETE(req: NextApiRequest, { params }: { params: { id: st
     try {
         const reserva = await prisma.reserva.delete({
             where: {
-                idReserva: id
+                idreserva: id
             }
         });
         return NextResponse.json({ message: "Reserva deletado com sucesso", reserva });
@@ -63,7 +63,7 @@ export async function PATCH(req: NextRequest, context: { params: { id: string } 
 
         // Get existing reservation to find associated event
         const existingReserva = await prisma.reserva.findUnique({
-            where: { idReserva: idreserva },
+            where: { idreserva: idreserva },
             include: { evento: true }
         });
 
@@ -86,7 +86,7 @@ export async function PATCH(req: NextRequest, context: { params: { id: string } 
         // Update reservation and event in transaction
         const [updatedReserva, updatedEvent] = await prisma.$transaction([
             prisma.reserva.update({
-                where: { idReserva: idreserva },
+                where: { idreserva: idreserva },
                 data: {
                     dataReserva: new Date(reservaData.dataReserva),
                     horaInicio: constructISO(reservaData.dataReserva, reservaData.horaInicio),

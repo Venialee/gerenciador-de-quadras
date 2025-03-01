@@ -71,7 +71,7 @@ export function ReservaProvider({ children }: { children: ReactNode }) {
 
     const handleDeleteReserva = async (reserva: ReservaInterface) => {
         try {
-            const res = await fetch(`/api/reserva/${reserva.idReserva}`, {
+            const res = await fetch(`/api/reserva/${reserva.idreserva}`, {
                 method: 'DELETE',
             })
 
@@ -79,9 +79,9 @@ export function ReservaProvider({ children }: { children: ReactNode }) {
 
             if (res.ok) {
                 console.log("Reserva deletada com sucesso", data);
-                setReservasPendentes((prev) => prev.filter((r) => r.idReserva !== reserva.idReserva));
-                setReservasAprovadas((prev) => prev.filter((r) => r.idReserva !== reserva.idReserva));
-                setReservasCanceladas((prev) => prev.filter((r) => r.idReserva !== reserva.idReserva));
+                setReservasPendentes((prev) => prev.filter((r) => r.idreserva !== reserva.idreserva));
+                setReservasAprovadas((prev) => prev.filter((r) => r.idreserva !== reserva.idreserva));
+                setReservasCanceladas((prev) => prev.filter((r) => r.idreserva !== reserva.idreserva));
             } else {
                 console.error("Erro ao deletar reserva", data);
                 return null;
@@ -94,12 +94,12 @@ export function ReservaProvider({ children }: { children: ReactNode }) {
     }
 
     const handleAlterarStatusReserva = async (reserva: ReservaInterface, status: number) => {
-        if (!reserva || !reserva.idReserva) {
+        if (!reserva || !reserva.idreserva) {
             console.error("Erro: ID da reserva não informado corretamente.");
             return;
         }
 
-        const idreserva = reserva.idReserva;
+        const idreserva = reserva.idreserva;
         console.log("ID da reserva recebido:", idreserva);
 
         try {
@@ -127,11 +127,11 @@ export function ReservaProvider({ children }: { children: ReactNode }) {
             console.log('Reserva atualizada:', data);
 
             if (status === 1) {
-                setReservasPendentes((prev) => prev.filter((r) => r.idReserva !== idreserva));
+                setReservasPendentes((prev) => prev.filter((r) => r.idreserva !== idreserva));
                 setReservasAprovadas((prev) => [...prev, { ...reserva, status }]);
             }
             else if (status === 2) {
-                setReservasPendentes((prev) => prev.filter((r) => r.idReserva !== idreserva));
+                setReservasPendentes((prev) => prev.filter((r) => r.idreserva !== idreserva));
                 setReservasCanceladas((prev) => [...prev, { ...reserva, status }]);
             }
         } catch (error) {

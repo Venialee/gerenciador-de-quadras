@@ -11,14 +11,14 @@ export default function ({ params }: { params: Promise<{ id: string }> }) {
 
     const { id } = use(params);
 
-    const reserva = reservasPendentes.find(reserva => reserva.idReserva === Number(id));
+    const reserva = reservasPendentes.find(reserva => reserva.idreserva === Number(id));
 
     const [novaData, setNovaData] = useState(reserva?.dataReserva || "");
     const [novaHoraInicio, setNovaHoraInicio] = useState(reserva?.horaInicio || "");
     const [novaHoraFim, setNovaHoraFim] = useState(reserva?.horaFim || "");
-    const [novoNomeEvento, setNovoNomeEvento] = useState(reserva?.evento?.nome );
-    const [novaDescricao, setnovaDescricao] = useState(reserva?.evento?.descricao );
-    const [novoOrganizador, setnovoOrganizador] = useState(reserva?.evento?.organizador );
+    const [novoNomeEvento, setNovoNomeEvento] = useState(reserva?.evento?.nome);
+    const [novaDescricao, setnovaDescricao] = useState(reserva?.evento?.descricao);
+    const [novoOrganizador, setnovoOrganizador] = useState(reserva?.evento?.organizador);
 
     useEffect(() => {
         if (reserva) {
@@ -39,20 +39,20 @@ export default function ({ params }: { params: Promise<{ id: string }> }) {
             dataReserva: novaData,
             horaInicio: novaHoraInicio,
             horaFim: novaHoraFim,
-           
+
         };
         if (updatedReserva.evento) {
             updatedReserva.evento = {
                 ...updatedReserva.evento,
-                nome: novoNomeEvento  || '',
-                descricao: novaDescricao|| '',
-                organizador: novoOrganizador|| ''
+                nome: novoNomeEvento || '',
+                descricao: novaDescricao || '',
+                organizador: novoOrganizador || ''
             };
-          }
+        }
         console.log("Enviando reserva para atualização:", updatedReserva); // 👈 Debug
 
         try {
-            const res = await fetch(`/api/reserva/${reserva.idReserva}`, {
+            const res = await fetch(`/api/reserva/${reserva.idreserva}`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(updatedReserva), // Certifique-se de que isso não é null
@@ -87,24 +87,24 @@ export default function ({ params }: { params: Promise<{ id: string }> }) {
                     Hora Fim:
                     <input type="time" className="border p-2 w-full" value={novaHoraFim} onChange={(e) => setNovaHoraFim(e.target.value)} />
                 </label>
-               
-                {reserva?.evento ?(
+
+                {reserva?.evento ? (
                     <>
                         <label className="block mb-4">
-                        Nome evento:
-                        <input type="text" className="border p-2 w-full" value={novoNomeEvento} onChange={(e) => setNovoNomeEvento(e.target.value)} />
+                            Nome evento:
+                            <input type="text" className="border p-2 w-full" value={novoNomeEvento} onChange={(e) => setNovoNomeEvento(e.target.value)} />
                         </label>
                         <label className="block mb-4">
-                        Descricao evento:
-                        <input type="text" className="border p-2 w-full" value={novaDescricao} onChange={(e) => setnovaDescricao(e.target.value)} />
+                            Descricao evento:
+                            <input type="text" className="border p-2 w-full" value={novaDescricao} onChange={(e) => setnovaDescricao(e.target.value)} />
                         </label>
                         <label className="block mb-4">
-                        Organizador evento:
-                        <input type="text" className="border p-2 w-full" value={novoOrganizador} onChange={(e) => setnovoOrganizador(e.target.value)} />
+                            Organizador evento:
+                            <input type="text" className="border p-2 w-full" value={novoOrganizador} onChange={(e) => setnovoOrganizador(e.target.value)} />
                         </label>
                     </>
-                ): (<p className="block mb-4">voce não cadastrou evento</p>)}
-               
+                ) : (<p className="block mb-4">voce não cadastrou evento</p>)}
+
                 <div className="flex justify-between">
                     <button onClick={handleSubmit} className="bg-green-500 text-white px-4 py-2 rounded">Salvar</button>
                     <button onClick={() => router.back()} className="bg-red-500 text-white px-4 py-2 rounded">Cancelar</button>
