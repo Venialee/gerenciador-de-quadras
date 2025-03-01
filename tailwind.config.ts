@@ -20,6 +20,15 @@ export default {
         darkOrange: '#F41300',
       },
     },
+    screens: {
+      xsm: "375px",
+      sm: "640px",
+      md: "768px",
+      lg: "1024px",
+      xl: "1280px",
+      xxl: "2210px",
+      'low': { 'raw': '(max-height: 670px)' },
+    }
   },
   plugins: [],
 } satisfies Config;
