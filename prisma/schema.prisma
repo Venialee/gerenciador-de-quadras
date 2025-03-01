@@ -1,49 +1,46 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 model Cidade {
-  idcidade Int        @id @default(autoincrement())
+  idCidade Int        @id 
   nome     String     @db.VarChar(100)
   UF       String     @db.VarChar(2)
   endereco Endereco[]
 }
 
 model Endereco {
-  idendereco  Int      @id
+  idEndereco  Int      @id 
   idCidade    Int
   logradouro  String   @db.VarChar(100)
   bairro      String   @db.VarChar(100)
   CEP         String   @db.VarChar(100)
   numero      Int
   complemento String?  @db.VarChar(100)
-  cidade      Cidade   @relation(fields: [idCidade], references: [idcidade])
+  cidade      Cidade   @relation(fields: [idCidade], references: [idCidade])
   quadra      Quadra[]
 }
 
 model Quadra {
-  idQuadra    Int           @id
+  idQuadra    Int           @id 
   idEndereco  Int
   nome        String        @db.VarChar(100)
   capacidade  Int
-  endereco    Endereco      @relation(fields: [idEndereco], references: [idendereco])
+  endereco    Endereco      @relation(fields: [idEndereco], references: [idEndereco])
   reserva     Reserva[]
   quadraRegra QuadraRegra[]
 }
 
 model Evento {
-  idevento    Int       @id @default(autoincrement())
+  idEvento    Int       @id @default(autoincrement())
   nome        String    @db.VarChar(100)
   descricao   String?   @db.VarChar(100)
   organizador String    @db.VarChar(100)
@@ -64,33 +61,33 @@ model Usuario {
 }
 
 model Reserva {
-  idreserva   Int      @id @default(autoincrement())
+  idReserva   Int      @id @default(autoincrement())
   idQuadra    Int
   idEvento    Int?
   idUsuario   Int
   dataReserva DateTime @db.Date
   horaInicio  DateTime @db.Time
   horaFim     DateTime @db.Time
-  status      Int
+  status      Int      @db.SmallInt
   quadra      Quadra   @relation(fields: [idQuadra], references: [idQuadra])
-  evento      Evento?  @relation(fields: [idEvento], references: [idevento])
+  evento      Evento?  @relation(fields: [idEvento], references: [idEvento])
   usuario     Usuario  @relation(fields: [idUsuario], references: [idUsuario])
 }
 
 model Administrador {
-  idAdministrador Int     @id @default(autoincrement())
+  idAdministrador Int     @id
   chaveAcesso     String  @db.VarChar(100)
   usuario         Usuario @relation(fields: [idAdministrador], references: [idUsuario])
 }
 
 model Aluno {
-  idAluno   Int     @id @default(autoincrement())
+  idAluno   Int     @id
   matricula String  @db.VarChar(100)
   usuario   Usuario @relation(fields: [idAluno], references: [idUsuario])
 }
 
 model Regra {
-  idRegra     Int           @id
+  idRegra     Int           @id 
   descricao   String        @db.VarChar(100)
   nome        String        @db.Char(50)
   quadraRegra QuadraRegra[]

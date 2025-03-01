@@ -41,14 +41,14 @@ export default function Reservas() {
 
             const newReserva = {
                 idQuadra: 1,
-                idUsuario: user.idUsuario,
+                idUsuario: user.usuario.idUsuario,
                 dataReserva: data,
                 horaInicio: horaInicio,
                 horaFim: horaFim,
                 status: 0,
-                nomeEvento: nomeEvento || null,
-                descricaoEvento: descricaoEvento || null,
-                organizadorEvento: organizadorEvento || null,
+                nomeEvento: nomeEvento,
+                descricaoEvento: descricaoEvento,
+                organizadorEvento: organizadorEvento,
             };
 
             await handleCadastrarReserva(newReserva);

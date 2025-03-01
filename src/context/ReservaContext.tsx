@@ -29,11 +29,8 @@ export function ReservaProvider({ children }: { children: ReactNode }) {
     const [reservasPendentes, setReservasPendentes] = useState<ReservaInterface[]>([]);
     const [reservasAprovadas, setReservasAprovadas] = useState<ReservaInterface[]>([]);
     const [reservasCanceladas, setReservasCanceladas] = useState<ReservaInterface[]>([]);
-
     useEffect(() => {
         const fetchReservas = async () => {
-            const databaseReservas = await fetchAllReservasFromDB();
-
             const pendentes = await fetchReservasPendentesFromDB();
             const aprovadas = await fetchReservasAprovadasFromDB();
             const canceladas = await fetchReservasCanceladasFromDB();
@@ -42,7 +39,6 @@ export function ReservaProvider({ children }: { children: ReactNode }) {
             setReservasAprovadas(aprovadas);
             setReservasCanceladas(canceladas);
 
-            console.log("Reservas recebidas do banco:", databaseReservas);
         };
 
         fetchReservas();
@@ -75,7 +71,7 @@ export function ReservaProvider({ children }: { children: ReactNode }) {
 
     const handleDeleteReserva = async (reserva: ReservaInterface) => {
         try {
-            const res = await fetch(`/api/reserva/${reserva.idreserva}`, {
+            const res = await fetch(`/api/reserva/${reserva.idReserva}`, {
                 method: 'DELETE',
             })
 
@@ -83,9 +79,9 @@ export function ReservaProvider({ children }: { children: ReactNode }) {
 
             if (res.ok) {
                 console.log("Reserva deletada com sucesso", data);
-                setReservasPendentes((prev) => prev.filter((r) => r.idreserva !== reserva.idreserva));
-                setReservasAprovadas((prev) => prev.filter((r) => r.idreserva !== reserva.idreserva));
-                setReservasCanceladas((prev) => prev.filter((r) => r.idreserva !== reserva.idreserva));
+                setReservasPendentes((prev) => prev.filter((r) => r.idReserva !== reserva.idReserva));
+                setReservasAprovadas((prev) => prev.filter((r) => r.idReserva !== reserva.idReserva));
+                setReservasCanceladas((prev) => prev.filter((r) => r.idReserva !== reserva.idReserva));
             } else {
                 console.error("Erro ao deletar reserva", data);
                 return null;
@@ -98,19 +94,19 @@ export function ReservaProvider({ children }: { children: ReactNode }) {
     }
 
     const handleAlterarStatusReserva = async (reserva: ReservaInterface, status: number) => {
-        if (!reserva || !reserva.idreserva) {
+        if (!reserva || !reserva.idReserva) {
             console.error("Erro: ID da reserva não informado corretamente.");
             return;
         }
 
-        const idreserva = reserva.idreserva;
+        const idreserva = reserva.idReserva;
         console.log("ID da reserva recebido:", idreserva);
 
         try {
             const response = await fetch(`/api/reserva/${idreserva}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ idreserva, status }),
+                body: JSON.stringify({ reserva, idreserva, status }),
             });
 
             const data = await response.json();
@@ -131,11 +127,11 @@ export function ReservaProvider({ children }: { children: ReactNode }) {
             console.log('Reserva atualizada:', data);
 
             if (status === 1) {
-                setReservasPendentes((prev) => prev.filter((r) => r.idreserva !== idreserva));
+                setReservasPendentes((prev) => prev.filter((r) => r.idReserva !== idreserva));
                 setReservasAprovadas((prev) => [...prev, { ...reserva, status }]);
             }
             else if (status === 2) {
-                setReservasPendentes((prev) => prev.filter((r) => r.idreserva !== idreserva));
+                setReservasPendentes((prev) => prev.filter((r) => r.idReserva !== idreserva));
                 setReservasCanceladas((prev) => [...prev, { ...reserva, status }]);
             }
         } catch (error) {

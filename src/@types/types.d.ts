@@ -36,7 +36,7 @@ export interface ReservaInterface {
     status: number,
     evento?: {
         nome: string,
-        decricao: string,
+        descricao: string,
         organizador: string
     }
 }
