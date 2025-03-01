@@ -45,7 +45,17 @@ export async function POST(req: NextRequest) {
             descricaoEvento,
             organizadorEvento
         } = body;
-
+        console.log(
+            idQuadra,
+            idUsuario,
+            dataReserva,
+            horaInicio,
+            horaFim,
+            status,
+            nomeEvento,
+            descricaoEvento,
+            organizadorEvento
+        )
         if (!idQuadra || !idUsuario || !dataReserva || !horaInicio || !horaFim) {
             return NextResponse.json({ message: "Preencha todos os campos obrigatórios" }, { status: 400 });
         }
@@ -61,7 +71,7 @@ export async function POST(req: NextRequest) {
                 },
             });
 
-            idEvento = eventoCriado.idevento;
+            idEvento = eventoCriado.idEvento;
         }
 
         const reserva = await prisma.reserva.create({

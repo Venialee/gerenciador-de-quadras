@@ -26,7 +26,7 @@ export interface AlunoInterface {
 }
 
 export interface ReservaInterface {
-    idreserva: number,
+    idReserva: number,
     idQuadra: number,
     idEvento?: number,
     idUsuario: number,
@@ -36,7 +36,7 @@ export interface ReservaInterface {
     status: number,
     evento?: {
         nome: string,
-        decricao: string,
+        descricao: string,
         organizador: string
     }
 }
