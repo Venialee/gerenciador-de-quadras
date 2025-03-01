@@ -15,14 +15,7 @@ export async function GET(request: Request) {
             }
         });
 
-        const reservasFormatadas = reservas.map(reserva => ({
-            ...reserva,
-            dataReserva: reserva.dataReserva.toISOString().split("T")[0],
-            horaInicio: reserva.horaInicio.toTimeString().split(" ")[0],
-            horaFim: reserva.horaFim.toTimeString().split(" ")[0],
-        }));
-
-        return NextResponse.json(reservasFormatadas);
+        return NextResponse.json(reservas);
     } catch (error) {
         console.error("Erro ao buscar reservas:", error);
         return NextResponse.json({ message: "Erro interno no servidor" }, { status: 500 });
@@ -48,6 +41,10 @@ export async function POST(req: NextRequest) {
 
         if (!idQuadra || !idUsuario || !dataReserva || !horaInicio || !horaFim) {
             return NextResponse.json({ message: "Preencha todos os campos obrigatórios" }, { status: 400 });
+        }
+
+        if (horaFim <= horaInicio) {
+            return NextResponse.json({ message: "A hora final deve ser maior que a hora inicial" }, { status: 400 });
         }
 
         let idEvento: number | null = null;
@@ -76,14 +73,7 @@ export async function POST(req: NextRequest) {
             },
         });
 
-        const reservaFormatada = {
-            ...reserva,
-            dataReserva: reserva.dataReserva.toISOString().split('T')[0], // Formato YYYY-MM-DD
-            horaInicio: reserva.horaInicio.toISOString().split('T')[1].split('.')[0], // Formato HH:MM:SS
-            horaFim: reserva.horaFim.toISOString().split('T')[1].split('.')[0], // Formato HH:MM:SS
-        };
-
-        return NextResponse.json(reservaFormatada, { status: 201 });
+        return NextResponse.json(reserva, { status: 201 });
 
     } catch (error) {
         console.error("Erro ao processar a requisição:", error);

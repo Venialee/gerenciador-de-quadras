@@ -63,12 +63,13 @@ export function ReservaProvider({ children }: { children: ReactNode }) {
             }
 
             const reservaCriada = await res.json();
-            console.log("Reserva criada com sucesso:", reservaCriada);
+            window.alert("Reserva cadastrada com sucesso");
 
             setReservasPendentes((prev) => [...prev, reservaCriada]);
 
         } catch (error) {
             console.error("Erro ao cadastrar reserva:", error);
+            window.alert("Erro ao cadastrar reserva");
         }
     };
 
@@ -113,7 +114,20 @@ export function ReservaProvider({ children }: { children: ReactNode }) {
             });
 
             const data = await response.json();
-            if (!response.ok) throw new Error(data.message);
+
+            if (!response.ok) {
+                // Caso específico para conflito de horários (código 409)
+                if (response.status === 409) {
+                    // Aqui você pode mostrar uma mensagem de erro ou um toast para o usuário
+                    console.error('Conflito de horário:', data.message);
+                    // Se estiver usando alguma biblioteca de notificação como react-toastify:
+                    // toast.error('Não é possível aprovar: já existe uma reserva neste horário');
+                    alert('Não é possível aprovar: já existe uma reserva neste horário');
+                    return;
+                }
+                throw new Error(data.message);
+            }
+
             console.log('Reserva atualizada:', data);
 
             if (status === 1) {
@@ -126,6 +140,8 @@ export function ReservaProvider({ children }: { children: ReactNode }) {
             }
         } catch (error) {
             console.error('Erro ao atualizar reserva:', error);
+            // Aqui você pode mostrar uma mensagem de erro genérica
+            alert('Erro ao atualizar reserva');
         }
     };
 

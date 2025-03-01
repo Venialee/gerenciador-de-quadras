@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useUsers } from "@/context/UserContext";
-import Box from "@/components/Box";
 import GenericInput from "@/components/GenericInput";
 import Button from "@/components/Button";
 import { UsuarioInterface } from "@/@types/types";

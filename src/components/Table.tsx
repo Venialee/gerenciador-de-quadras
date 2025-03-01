@@ -3,6 +3,8 @@ import Button from "./Button";
 import { useReserva } from "@/context/ReservaContext";
 import { useUsers } from "@/context/UserContext";
 import Link from "next/link";
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
 
 export interface TableProps {
     reserva: ReservaInterface
@@ -11,6 +13,16 @@ export interface TableProps {
 export default function Table({ reserva }: TableProps) {
     const { handleAlterarStatusReserva, handleDeleteReserva } = useReserva();
     const { currentUser } = useUsers();
+
+    dayjs.extend(utc);
+
+    function formatDate(date: string) {
+        return dayjs.utc(date).format('DD/MM/YYYY'); // Usa UTC diretamente
+    }
+
+    function formatTime(time: string) {
+        return dayjs.utc(time).format('HH:mm'); // Formata a hora usando UTC
+    }
 
     const showButton = () => {
         if (reserva.status === 0 && currentUser?.tipo === 'admin') {
@@ -76,9 +88,9 @@ export default function Table({ reserva }: TableProps) {
                 </thead>
                 <tbody>
                     <tr>
-                        <td className="border border-gray-400 p-2">{reserva.dataReserva}</td>
-                        <td className="border border-gray-400 p-2">{reserva.horaInicio}</td>
-                        <td className="border border-gray-400 p-2">{reserva.horaFim}</td>
+                        <td className="border border-gray-400 p-2">{formatDate(reserva.dataReserva)}</td>
+                        <td className="border border-gray-400 p-2">{formatTime(reserva.horaInicio)}</td>
+                        <td className="border border-gray-400 p-2">{formatTime(reserva.horaFim)}</td>
                         <td className="border border-gray-400 p-2">{setReservaStatus()}</td>
                     </tr>
                     {reserva.idEvento !== null ?

@@ -1,13 +1,12 @@
 'use client';
 
 import { useState } from "react";
-import { ReservaInterface } from "@/@types/types";
 import { useReserva } from "@/context/ReservaContext";
 
 import Box from "@/components/Box";
 import Button from "@/components/Button";
 import GenericInput from "@/components/GenericInput";
-import TableList from "@/components/TableList";
+import RegrasPopup from "@/components/RegrasPopUp";
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -20,6 +19,7 @@ export default function Reservas() {
     const [nomeEvento, setNomeEvento] = useState<string>("");
     const [descricaoEvento, setDescricaoEvento] = useState<string>("");
     const [organizadorEvento, setOrganizadorEvento] = useState<string>("");
+    const [mostrarPopup, setMostrarPopup] = useState(false);
     const { currentUser } = useUsers();
     const router = useRouter();
 
@@ -30,9 +30,6 @@ export default function Reservas() {
     }, [currentUser, router]);
 
     const {
-        reservas,
-        reservasAprovadas,
-        reservasCanceladas,
         handleCadastrarReserva
     } = useReserva();
 
@@ -55,6 +52,7 @@ export default function Reservas() {
             };
 
             await handleCadastrarReserva(newReserva);
+
             resetFileds();
         }
     };
@@ -78,6 +76,16 @@ export default function Reservas() {
                 <GenericInput type="text" label="Nome do Evento" value={nomeEvento} onChange={setNomeEvento} />
                 <GenericInput type="text" label="Descrição do Evento" value={descricaoEvento} onChange={setDescricaoEvento} />
                 <GenericInput type="text" label="Organizador do Evento" value={organizadorEvento} onChange={setOrganizadorEvento} />
+                <div>
+                    <button
+                        onClick={() => setMostrarPopup(true)}
+                        className="text-red-500 p-0 m-0"
+                    >
+                        Conferir regras da quadra
+                    </button>
+
+                    {mostrarPopup && <RegrasPopup onClose={() => setMostrarPopup(false)} />}
+                </div>
                 <Button content="Reservar" onClick={() => handleClick()} />
             </Box>
         </>

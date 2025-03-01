@@ -56,6 +56,56 @@ export async function PATCH(req: NextRequest, context: { params: { id: string } 
             return NextResponse.json({ message: 'Parâmetros inválidos' }, { status: 400 });
         }
 
+        // Buscar a reserva que está sendo atualizada
+        const reservaAtual = await prisma.reserva.findUnique({
+            where: { idreserva: idreserva },
+        });
+
+        if (!reservaAtual) {
+            return NextResponse.json({ message: 'Reserva não encontrada' }, { status: 404 });
+        }
+
+        // Se estiver aprovando a reserva (status = 1), verificar conflitos
+        if (status === 1) {
+            // Buscar reservas já aprovadas na mesma quadra e na mesma data
+            const reservasAprovadas = await prisma.reserva.findMany({
+                where: {
+                    idQuadra: reservaAtual.idQuadra,
+                    dataReserva: reservaAtual.dataReserva,
+                    status: 1, // Apenas reservas já aprovadas
+                    idreserva: { not: idreserva } // Excluir a reserva atual da verificação
+                },
+            });
+
+            // Converter os horários da reserva atual para comparação
+            const inicioAtual = new Date(reservaAtual.horaInicio).getTime();
+            const fimAtual = new Date(reservaAtual.horaFim).getTime();
+
+            // Verificar se há alguma sobreposição de horários
+            const conflito = reservasAprovadas.some(reserva => {
+                const inicioReserva = new Date(reserva.horaInicio).getTime();
+                const fimReserva = new Date(reserva.horaFim).getTime();
+
+                // Há conflito se:
+                // 1. O início da reserva atual está entre o início e fim de uma reserva aprovada
+                // 2. O fim da reserva atual está entre o início e fim de uma reserva aprovada
+                // 3. A reserva atual engloba completamente uma reserva aprovada
+                return (
+                    (inicioAtual >= inicioReserva && inicioAtual < fimReserva) ||
+                    (fimAtual > inicioReserva && fimAtual <= fimReserva) ||
+                    (inicioAtual <= inicioReserva && fimAtual >= fimReserva)
+                );
+            });
+
+            if (conflito) {
+                return NextResponse.json(
+                    { message: 'Não é possível aprovar: já existe uma reserva neste horário' },
+                    { status: 409 } // Código 409 para conflito
+                );
+            }
+        }
+
+        // Se não houver conflito, ou se estiver cancelando a reserva (status = 2), prosseguir
         const reserva = await prisma.reserva.update({
             where: { idreserva: idreserva },
             data: { status },
