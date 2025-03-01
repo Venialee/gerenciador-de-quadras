@@ -13,31 +13,31 @@ export default function Table({ reserva }: TableProps) {
     const { currentUser } = useUsers();
 
     const showButton = () => {
-        if (reserva.status === 0 && (currentUser as any)?.usuario?.idUsuario === 'admin') {
+        if (reserva.status === 0 && currentUser?.tipo === 'admin') {
             return (
                 <>
-                    <Button content="Aprovar reserva" variation="green" onClick={() => {
+                    <Button content="Aprovar reserva" variation="backgroundYellow" onClick={() => {
                         handleAlterarStatusReserva(reserva, 1);
                     }} />
-                    <Button content="Cancelar reserva" variation="red" onClick={() => {
+                    <Button content="Cancelar reserva" variation="lightOrange" onClick={() => {
                         handleAlterarStatusReserva(reserva, 2);
                     }} />
                 </>
             );
         }
-        else if (reserva.status === 2 && (currentUser as any)?.usuario?.idUsuario === 'admin') {
+        else if (reserva.status === 2 && currentUser?.tipo === 'admin') {
             return (
                 <>
-                    <Button content="Deletar reserva" variation="red" onClick={() => {
+                    <Button content="Deletar reserva" variation="lightOrange" onClick={() => {
                         handleDeleteReserva(reserva);
                     }} />
                 </>
             );
         }
-        else if (reserva.status === 0 && (currentUser as any)?.usuario?.idUsuario === reserva.idUsuario) {
+        else if (reserva.status === 0 && currentUser?.idUsuario === reserva.idUsuario) {
             return (
                 <>
-                    <Link href={`/minhas-reservas/${reserva.idReserva}`} scroll={false}>
+                    <Link href={`/minhas-reservas/${reserva.idreserva}`} scroll={false}>
                         <button className="bg-blue-500 text-white px-4 py-2 rounded">
                             Editar Reserva
                         </button>
@@ -72,9 +72,6 @@ export default function Table({ reserva }: TableProps) {
                         <th className="border border-gray-400 p-2">Hora Inicial</th>
                         <th className="border border-gray-400 p-2">Hora Final</th>
                         <th className="border border-gray-400 p-2">Status</th>
-                        <th className="border border-gray-400 p-2">Evento</th>
-                        <th className="border border-gray-400 p-2">Organizador</th>
-                        <th className="border border-gray-400 p-2">Descrição</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -83,10 +80,22 @@ export default function Table({ reserva }: TableProps) {
                         <td className="border border-gray-400 p-2">{reserva.horaInicio}</td>
                         <td className="border border-gray-400 p-2">{reserva.horaFim}</td>
                         <td className="border border-gray-400 p-2">{setReservaStatus()}</td>
-                         <td className="border border-gray-400 p-2"> {reserva.evento?.nome ?? 'N/A'}</td>
-                         <td className="border border-gray-400 p-2">{reserva.evento?.organizador ?? 'N/A'}</td>
-                         <td className="border border-gray-400 p-2">{reserva.evento?.descricao ?? 'N/A'}</td>
                     </tr>
+                    {reserva.idEvento !== null ?
+                        <>
+                            <tr className="border border-gray-400 p-2">
+                                <td className="w-full">Evento: {reserva.evento?.nome ?? 'N/A'}</td>
+                            </tr>
+                            <tr className="border border-gray-400 p-2">
+                                <td className="w-full">Organizador do Evento: {reserva.evento?.organizador ?? 'N/A'}</td>
+                            </tr>
+                            <tr className="border border-gray-400 p-2">
+                                <td className="w-full">Descrição: {reserva.evento?.decricao ?? 'N/A'}</td>
+                            </tr>
+                        </>
+                        :
+                        null
+                    }
                 </tbody>
             </table>
             <div className="justify-between w-full flex max-w-[371px]">
