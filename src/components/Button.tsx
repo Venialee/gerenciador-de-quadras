@@ -1,15 +1,18 @@
 interface ButtonProps {
-    content: string
-    variation?: 'green' | 'red'
-    onClick?: () => void
+    content: string;
+    variation?: 'backgroundYellow' | 'lightOrange';
+    onClick?: () => void;
 }
 
-export default function Button({ content, variation = "green", onClick }: ButtonProps) {
+export default function Button({ content, variation = "backgroundYellow", onClick }: ButtonProps) {
     return (
         <button
-            className={`py-2 px-4 rounded-lg text-white ${variation === "red" ? "bg-red-600 hover:bg-red-700" : "bg-green-600 hover:bg-green-700"}`}
+            className={`my-4 py-2 h-12 px-8 rounded-lg text-2xl text-darkBlue font-bold ${
+                variation === "lightOrange" ? "bg-lightOrange hover:bg-darkOrange" :
+                "bg-backgroundYellow hover:bg-complementYellow"
+            }`}
             onClick={onClick}>
             {content}
         </button>
-    )
+    );
 }
