@@ -41,7 +41,7 @@ export default function Reservas() {
 
             const newReserva = {
                 idQuadra: 1,
-                idUsuario: user.usuario.idUsuario,
+                idUsuario: user.idUsuario,
                 dataReserva: data,
                 horaInicio: horaInicio,
                 horaFim: horaFim,

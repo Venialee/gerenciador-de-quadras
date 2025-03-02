@@ -17,11 +17,11 @@ export default function Table({ reserva }: TableProps) {
     dayjs.extend(utc);
 
     function formatDate(date: string) {
-        return dayjs.utc(date).format('DD/MM/YYYY'); // Usa UTC diretamente
+        return dayjs.utc(date).format('DD/MM/YYYY');
     }
 
     function formatTime(time: string) {
-        return dayjs.utc(time).format('HH:mm'); // Formata a hora usando UTC
+        return dayjs.utc(time).format('HH:mm');
     }
 
     const showButton = () => {
@@ -102,7 +102,7 @@ export default function Table({ reserva }: TableProps) {
                                 <td className="w-full">Organizador do Evento: {reserva.evento?.organizador ?? 'N/A'}</td>
                             </tr>
                             <tr className="border border-gray-400 p-2">
-                                <td className="w-full">Descrição: {reserva.evento?.decricao ?? 'N/A'}</td>
+                                <td className="w-full">Descrição: {reserva.evento?.descricao ?? 'N/A'}</td>
                             </tr>
                         </>
                         :

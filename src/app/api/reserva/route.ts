@@ -68,7 +68,8 @@ export async function POST(req: NextRequest) {
                 },
             });
 
-            idEvento = eventoCriado.idEvento;
+            idEvento = eventoCriado.idevento;
+            console.log(eventoCriado);
         }
 
         const reserva = await prisma.reserva.create({
@@ -83,6 +84,7 @@ export async function POST(req: NextRequest) {
             },
         });
 
+        console.log(reserva);
         return NextResponse.json(reserva, { status: 201 });
 
     } catch (error) {
