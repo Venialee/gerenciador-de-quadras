@@ -14,7 +14,7 @@ export default function Register() {
     const [email, setEmail] = useState<string>("");
     const [senha, setSenha] = useState<string>("");
     const [CPF, setCPF] = useState<string>("");
-    const [matricula, setMatricula] = useState<number>(0);
+    const [matricula, setMatricula] = useState<string>("");
     const [telefone, setTelefone] = useState<string>("");
 
     const handleClick = async () => {
@@ -22,12 +22,12 @@ export default function Register() {
             telefone: telefone.trim(),
             nome,
             sobrenome,
-            email,
+            email: email.toLocaleLowerCase(),
             senha,
             CPF,
         };
 
-        await handleRegisterUser(novoUsuario, matricula !== 0 ? String(matricula) : undefined);
+        await handleRegisterUser(novoUsuario, matricula !== "" ? String(matricula) : undefined);
 
         resetFileds();
     };
@@ -37,6 +37,7 @@ export default function Register() {
         setEmail("");
         setSenha("");
         setCPF("");
+        setMatricula("");
     }
 
     return (
@@ -50,7 +51,7 @@ export default function Register() {
                         <GenericInput type="text" label="" value={telefone} onChange={setTelefone} placeholder="Telefone ex: 28 999..." icon={<img src="/phone.svg" alt="Ícone de senha" className="h-5 w-5 text-darkBlue" />} />
                         <GenericInput type="text" label="" value={CPF} onChange={setCPF} placeholder="Digite seu CPF" icon={<img src="/document.svg" alt="Ícone de senha" className="h-5 w-5 text-darkBlue" />} />
                         <GenericInput type="password" label="" value={senha} onChange={setSenha} placeholder="Crie uma senha" icon={<img src="/senha.svg" alt="Ícone de senha" className="h-5 w-5 text-darkBlue" />} />
-                        <GenericInput type="number" label="" value={matricula} onChange={setMatricula} placeholder="Matricula" icon={<img src="/document.svg" alt="Ícone de matricula" className="h-5 w-5 text-darkBlue" />} />
+                        <GenericInput type="text" label="" value={matricula} onChange={setMatricula} placeholder="Matricula" icon={<img src="/document.svg" alt="Ícone de matricula" className="h-5 w-5 text-darkBlue" />} />
                         <Button content="Cadastrar" onClick={() => handleClick()} />
                     </div>
                 </div>

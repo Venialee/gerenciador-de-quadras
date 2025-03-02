@@ -46,9 +46,12 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             }
 
             const data = await res.json();
-            setCurrentUser(data);
-            localStorage.setItem("currentUser", JSON.stringify(data));
-            console.log("Usuário salvo no localStorage:", data);
+
+            const userData = data.usuario || data;
+
+            setCurrentUser(userData);
+            localStorage.setItem("currentUser", JSON.stringify(userData));
+            console.log("Usuário salvo no localStorage:", userData);
             router.push('/');
 
             if (data.aluno) {
