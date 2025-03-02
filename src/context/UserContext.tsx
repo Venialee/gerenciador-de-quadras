@@ -81,7 +81,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
                 localStorage.setItem("currentUser", JSON.stringify(data));
                 console.log("Usuário salvo no localStorage:", data);
                 setCurrentUser(data);
-                router.push(data.tipo === 'admin' ? '/admin' : '/');
+                window.location.href = data.tipo === 'admin' ? '/admin' : '/';
             } else {
                 window.alert('Usuário ou senha incorretos');
             }
