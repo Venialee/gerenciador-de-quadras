@@ -22,7 +22,7 @@ export default function Register() {
             telefone: telefone.trim(),
             nome,
             sobrenome,
-            email: email.toLocaleLowerCase(),
+            email,
             senha,
             CPF,
         };
