@@ -58,6 +58,7 @@ export async function POST(req: NextRequest) {
                 },
             });
 
+            console.log("Evento criado:", eventoCriado);
             idEvento = eventoCriado.idevento;
         }
 
@@ -69,7 +70,10 @@ export async function POST(req: NextRequest) {
                 horaInicio: new Date(`1970-01-01T${horaInicio}:00Z`),
                 horaFim: new Date(`1970-01-01T${horaFim}:00Z`),
                 status,
-                idEvento
+                idEvento: idEvento ?? null
+            },
+            include: {
+                evento: true,
             },
         });
 

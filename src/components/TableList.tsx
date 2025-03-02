@@ -5,13 +5,14 @@ import Table from "./Table";
 
 interface TableListProps {
     tables: TableProps[];
+    displayEditButton?: boolean;
 }
 
-export default function TableList({ tables }: TableListProps) {
+export default function TableList({ tables, displayEditButton = false }: TableListProps) {
     return (
         <>
             {tables.map((table, index) => {
-                return <Table key={index} reserva={table.reserva} />;
+                return <Table displayEditButton={displayEditButton} key={index} reserva={table.reserva} />;
             })}
         </>
     );

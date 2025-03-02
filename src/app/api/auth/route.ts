@@ -8,7 +8,7 @@ export async function GET() {
 
     const usuariosComTelefone = usuarios.map(usuario => ({
         ...usuario,
-        telefone: usuario.telefone.toString()  // Converte o BigInt para string
+        telefone: usuario.telefone.toString()
     }));
 
     return NextResponse.json(usuariosComTelefone);

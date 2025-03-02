@@ -1,12 +1,14 @@
 'use client'
 
 import { useReserva } from "@/context/ReservaContext";
+import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { use } from "react";
+import utc from "dayjs/plugin/utc";
 
 export default function ({ params }: { params: Promise<{ id: string }> }) {
-    const { reservasPendentes, handleAlterarStatusReserva } = useReserva();
+    const { reservasPendentes } = useReserva();
     const router = useRouter();
 
     const { id } = use(params);
@@ -17,6 +19,16 @@ export default function ({ params }: { params: Promise<{ id: string }> }) {
     const [novaHoraInicio, setNovaHoraInicio] = useState(reserva?.horaInicio || "");
     const [novaHoraFim, setNovaHoraFim] = useState(reserva?.horaFim || "");
 
+    dayjs.extend(utc);
+
+    function formatTime(time: string) {
+        return dayjs.utc(`1970-01-01 ${time}`, 'YYYY-MM-DD HH:mm').toISOString();
+    }
+
+    function formatDate(date: string) {
+        return dayjs.utc(date, 'DD/MM/YYYY').toISOString();
+    }
+
     useEffect(() => {
         if (reserva) {
             setNovaData(reserva.dataReserva);
@@ -26,34 +38,9 @@ export default function ({ params }: { params: Promise<{ id: string }> }) {
     }, [reserva]);
 
     const handleSubmit = async () => {
-        if (!reserva) return;
-
-        const updatedReserva = {
-            ...reserva,
-            dataReserva: novaData,
-            horaInicio: novaHoraInicio,
-            horaFim: novaHoraFim,
-        };
-
-        console.log("Enviando reserva para atualização:", updatedReserva); // 👈 Debug
-
-        try {
-            const res = await fetch(`/api/reserva/${reserva.idreserva}`, {
-                method: "PATCH",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(updatedReserva), // Certifique-se de que isso não é null
-            });
-
-            if (!res.ok) {
-                throw new Error("Erro ao atualizar reserva");
-            }
-
-            handleAlterarStatusReserva(reserva, reserva.status);
-            alert("Reserva atualizada com sucesso!");
-            router.back();
-        } catch (error) {
-            console.error("Erro ao atualizar reserva:", error);
-        }
+        console.log(formatTime(novaHoraFim));
+        console.log(formatTime(novaHoraInicio));
+        console.log(formatDate(novaData));
     };
 
     return (
@@ -72,7 +59,6 @@ export default function ({ params }: { params: Promise<{ id: string }> }) {
                     Hora Fim:
                     <input type="time" className="border p-2 w-full" value={novaHoraFim} onChange={(e) => setNovaHoraFim(e.target.value)} />
                 </label>
-
                 <div className="flex justify-between">
                     <button onClick={handleSubmit} className="bg-green-500 text-white px-4 py-2 rounded">Salvar</button>
                     <button onClick={() => router.back()} className="bg-red-500 text-white px-4 py-2 rounded">Cancelar</button>

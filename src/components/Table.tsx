@@ -7,21 +7,22 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 
 export interface TableProps {
-    reserva: ReservaInterface
+    reserva: ReservaInterface;
+    displayEditButton?: boolean;
 }
 
-export default function Table({ reserva }: TableProps) {
+export default function Table({ reserva, displayEditButton = false }: TableProps) {
     const { handleAlterarStatusReserva, handleDeleteReserva } = useReserva();
     const { currentUser } = useUsers();
 
     dayjs.extend(utc);
 
     function formatDate(date: string) {
-        return dayjs.utc(date).format('DD/MM/YYYY'); // Usa UTC diretamente
+        return dayjs.utc(date).format('DD/MM/YYYY');
     }
 
     function formatTime(time: string) {
-        return dayjs.utc(time).format('HH:mm'); // Formata a hora usando UTC
+        return dayjs.utc(time).format('HH:mm');
     }
 
     const showButton = () => {
@@ -45,17 +46,6 @@ export default function Table({ reserva }: TableProps) {
                     }} />
                 </>
             );
-        }
-        else if (reserva.status === 0 && currentUser?.idUsuario === reserva.idUsuario) {
-            return (
-                <>
-                    <Link href={`/minhas-reservas/${reserva.idreserva}`} scroll={false}>
-                        <button className="bg-blue-500 text-white px-4 py-2 rounded">
-                            Editar Reserva
-                        </button>
-                    </Link>
-                </>
-            )
         }
         else {
             return null;
@@ -102,7 +92,7 @@ export default function Table({ reserva }: TableProps) {
                                 <td className="w-full">Organizador do Evento: {reserva.evento?.organizador ?? 'N/A'}</td>
                             </tr>
                             <tr className="border border-gray-400 p-2">
-                                <td className="w-full">Descrição: {reserva.evento?.decricao ?? 'N/A'}</td>
+                                <td className="w-full">Descrição: {reserva.evento?.descricao ?? 'N/A'}</td>
                             </tr>
                         </>
                         :
@@ -112,6 +102,11 @@ export default function Table({ reserva }: TableProps) {
             </table>
             <div className="justify-between w-full flex max-w-[371px]">
                 {showButton()}
+                {displayEditButton === true ? <Link href={`/minhas-reservas/${reserva.idreserva}`} scroll={false}>
+                    <button className="bg-blue-500 text-white px-4 py-2 rounded">
+                        Editar Reserva
+                    </button>
+                </Link> : null}
             </div>
         </div>
     );

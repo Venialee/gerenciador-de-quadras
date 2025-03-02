@@ -56,7 +56,6 @@ export async function PATCH(req: NextRequest, context: { params: { id: string } 
             return NextResponse.json({ message: 'Parâmetros inválidos' }, { status: 400 });
         }
 
-        // Buscar a reserva que está sendo atualizada
         const reservaAtual = await prisma.reserva.findUnique({
             where: { idreserva: idreserva },
         });
@@ -65,31 +64,22 @@ export async function PATCH(req: NextRequest, context: { params: { id: string } 
             return NextResponse.json({ message: 'Reserva não encontrada' }, { status: 404 });
         }
 
-        // Se estiver aprovando a reserva (status = 1), verificar conflitos
         if (status === 1) {
-            // Buscar reservas já aprovadas na mesma quadra e na mesma data
             const reservasAprovadas = await prisma.reserva.findMany({
                 where: {
                     idQuadra: reservaAtual.idQuadra,
                     dataReserva: reservaAtual.dataReserva,
-                    status: 1, // Apenas reservas já aprovadas
-                    idreserva: { not: idreserva } // Excluir a reserva atual da verificação
+                    status: 1,
+                    idreserva: { not: idreserva }
                 },
             });
 
-            // Converter os horários da reserva atual para comparação
             const inicioAtual = new Date(reservaAtual.horaInicio).getTime();
             const fimAtual = new Date(reservaAtual.horaFim).getTime();
 
-            // Verificar se há alguma sobreposição de horários
             const conflito = reservasAprovadas.some(reserva => {
                 const inicioReserva = new Date(reserva.horaInicio).getTime();
                 const fimReserva = new Date(reserva.horaFim).getTime();
-
-                // Há conflito se:
-                // 1. O início da reserva atual está entre o início e fim de uma reserva aprovada
-                // 2. O fim da reserva atual está entre o início e fim de uma reserva aprovada
-                // 3. A reserva atual engloba completamente uma reserva aprovada
                 return (
                     (inicioAtual >= inicioReserva && inicioAtual < fimReserva) ||
                     (fimAtual > inicioReserva && fimAtual <= fimReserva) ||
@@ -100,12 +90,11 @@ export async function PATCH(req: NextRequest, context: { params: { id: string } 
             if (conflito) {
                 return NextResponse.json(
                     { message: 'Não é possível aprovar: já existe uma reserva neste horário' },
-                    { status: 409 } // Código 409 para conflito
+                    { status: 409 }
                 );
             }
         }
 
-        // Se não houver conflito, ou se estiver cancelando a reserva (status = 2), prosseguir
         const reserva = await prisma.reserva.update({
             where: { idreserva: idreserva },
             data: { status },
@@ -117,3 +106,218 @@ export async function PATCH(req: NextRequest, context: { params: { id: string } 
         return NextResponse.json({ message: 'Erro ao atualizar status da reserva' }, { status: 500 });
     }
 }
+
+// export async function PATCH(req: NextRequest, context: { params: { id: string } }) {
+//     try {
+//         const { id } = context.params;
+//         const idreserva = parseInt(id, 10);
+//         const requestData = await req.json();
+
+//         console.log("ID da reserva:", idreserva);
+//         console.log("Dados recebidos:", requestData);
+
+//         if (isNaN(idreserva)) {
+//             return NextResponse.json({ message: 'ID da reserva inválido' }, { status: 400 });
+//         }
+
+//         const reservaAtual = await prisma.reserva.findUnique({
+//             where: { idreserva: idreserva },
+//         });
+
+//         if (!reservaAtual) {
+//             return NextResponse.json({ message: 'Reserva não encontrada' }, { status: 404 });
+//         }
+
+//         console.log("Reserva atual:", reservaAtual);
+
+//         // Se a solicitação contém apenas status, processar como antes
+//         if (requestData.status !== undefined && Object.keys(requestData).length === 1) {
+//             const { status } = requestData;
+
+//             if (status !== 0 && status !== 1 && status !== 2) {
+//                 return NextResponse.json({ message: 'Status inválido' }, { status: 400 });
+//             }
+
+//             if (status === 1) {
+//                 // Verificação de conflito para aprovação (código existente)
+//                 // ...
+//             }
+
+//             const reserva = await prisma.reserva.update({
+//                 where: { idreserva: idreserva },
+//                 data: { status },
+//             });
+
+//             return NextResponse.json({ message: 'Status atualizado com sucesso', reserva }, { status: 200 });
+//         }
+//         // Se a solicitação contém informações de edição da reserva
+//         else {
+//             const { dataReserva, horaInicio, horaFim } = requestData;
+
+//             // Preparar dados para atualização
+//             let updateData: any = {};
+
+//             // Tratar a data
+//             if (dataReserva) {
+//                 updateData.dataReserva = new Date(dataReserva);
+//             }
+
+//             // Tratar hora início
+//             if (horaInicio) {
+//                 // Combinamos a data base com a hora
+//                 const [horaI, minutoI] = horaInicio.split(':').map(Number);
+//                 const dataBase = new Date();
+//                 dataBase.setHours(horaI, minutoI, 0, 0);
+//                 updateData.horaInicio = dataBase;
+//             }
+
+//             // Tratar hora fim
+//             if (horaFim) {
+//                 const [horaF, minutoF] = horaFim.split(':').map(Number);
+//                 const dataBase = new Date();
+//                 dataBase.setHours(horaF, minutoF, 0, 0);
+//                 updateData.horaFim = dataBase;
+//             }
+
+//             console.log("Dados a serem atualizados:", updateData);
+
+//             try {
+//                 // Atualizar a reserva
+//                 const reservaAtualizada = await prisma.reserva.update({
+//                     where: { idreserva },
+//                     data: updateData,
+//                 });
+
+//                 console.log("Reserva atualizada:", reservaAtualizada);
+
+//                 return NextResponse.json({
+//                     message: 'Reserva atualizada com sucesso',
+//                     reserva: reservaAtualizada
+//                 }, { status: 200 });
+//             } catch (dbError) {
+//                 console.error("Erro do Prisma:", dbError);
+//                 return NextResponse.json({
+//                     message: 'Erro ao atualizar reserva no banco de dados',
+//                     error: String(dbError)
+//                 }, { status: 500 });
+//             }
+//         }
+//     } catch (error) {
+//         console.error("Erro geral:", error);
+//         return NextResponse.json({
+//             message: 'Erro ao processar a requisição',
+//             error: String(error)
+//         }, { status: 500 });
+//     } finally {
+//         // Desconectar o Prisma para evitar conexões abertas
+//         await prisma.$disconnect();
+//     }
+// }
+
+// export async function PATCH(req: NextRequest, context: { params: { id: string } }) {
+//     try {
+//         const { id } = context.params;
+//         const idreserva = parseInt(id, 10);
+//         const requestData = await req.json();
+
+//         console.log("ID da reserva:", idreserva);
+//         console.log("Dados recebidos:", requestData);
+
+//         if (isNaN(idreserva)) {
+//             return NextResponse.json({ message: 'ID da reserva inválido' }, { status: 400 });
+//         }
+
+//         const reservaAtual = await prisma.reserva.findUnique({
+//             where: { idreserva: idreserva },
+//         });
+
+//         if (!reservaAtual) {
+//             return NextResponse.json({ message: 'Reserva não encontrada' }, { status: 404 });
+//         }
+
+//         console.log("Reserva atual:", reservaAtual);
+
+//         // Se a solicitação contém apenas status, processar como antes
+//         if (requestData.status !== undefined && Object.keys(requestData).length === 1) {
+//             const { status } = requestData;
+
+//             if (status !== 0 && status !== 1 && status !== 2) {
+//                 return NextResponse.json({ message: 'Status inválido' }, { status: 400 });
+//             }
+
+//             if (status === 1) {
+//                 // Verificação de conflito para aprovação (código existente)
+//                 // ...
+//             }
+
+//             const reserva = await prisma.reserva.update({
+//                 where: { idreserva: idreserva },
+//                 data: { status },
+//             });
+
+//             return NextResponse.json({ message: 'Status atualizado com sucesso', reserva }, { status: 200 });
+//         }
+//         // Se a solicitação contém informações de edição da reserva
+//         else {
+//             const { dataReserva, horaInicio, horaFim } = requestData;
+
+//             // Preparar dados para atualização
+//             let updateData: any = {};
+
+//             // Converter dataReserva para formato ISO
+//             if (dataReserva) {
+//                 const dataISO = new Date(dataReserva);
+//                 dataISO.setUTCHours(0, 0, 0, 0);
+//                 updateData.dataReserva = dataISO;
+//             }
+
+//             // Converter horaInicio para formato ISO
+//             if (horaInicio) {
+//                 const [horaI, minutoI] = horaInicio.split(':').map(Number);
+//                 const dataInicioISO = new Date(1970, 0, 1);
+//                 dataInicioISO.setUTCHours(horaI, minutoI, 0, 0);
+//                 updateData.horaInicio = dataInicioISO;
+//             }
+
+//             // Converter horaFim para formato ISO
+//             if (horaFim) {
+//                 const [horaF, minutoF] = horaFim.split(':').map(Number);
+//                 const dataFimISO = new Date(1970, 0, 1);
+//                 dataFimISO.setUTCHours(horaF, minutoF, 0, 0);
+//                 updateData.horaFim = dataFimISO;
+//             }
+
+//             console.log("Dados a serem atualizados:", updateData);
+
+//             try {
+//                 // Atualizar a reserva
+//                 const reservaAtualizada = await prisma.reserva.update({
+//                     where: { idreserva },
+//                     data: updateData,
+//                 });
+
+//                 console.log("Reserva atualizada:", reservaAtualizada);
+
+//                 return NextResponse.json({
+//                     message: 'Reserva atualizada com sucesso',
+//                     reserva: reservaAtualizada
+//                 }, { status: 200 });
+//             } catch (dbError) {
+//                 console.error("Erro do Prisma:", dbError);
+//                 return NextResponse.json({
+//                     message: 'Erro ao atualizar reserva no banco de dados',
+//                     error: String(dbError)
+//                 }, { status: 500 });
+//             }
+//         }
+//     } catch (error) {
+//         console.error("Erro geral:", error);
+//         return NextResponse.json({
+//             message: 'Erro ao processar a requisição',
+//             error: String(error)
+//         }, { status: 500 });
+//     } finally {
+//         // Desconectar o Prisma para evitar conexões abertas
+//         await prisma.$disconnect();
+//     }
+// }
