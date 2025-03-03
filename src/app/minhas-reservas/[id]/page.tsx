@@ -13,13 +13,11 @@ export default function ({ params }: { params: Promise<{ id: string }> }) {
     const { id } = use(params);
 
     const reserva = reservasPendentes.find(reserva => reserva.idReserva === Number(id));
-    console.log('rv',reserva)
     const [novaData, setNovaData] = useState(reserva?.dataReserva || "");
     const [novaHoraInicio, setNovaHoraInicio] = useState(reserva?.horaInicio || "");
     const [novaHoraFim, setNovaHoraFim] = useState(reserva?.horaFim || "");
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState("");
-
     // dayjs.extend(utc);
 
     // function formatTime(time: string) {
@@ -32,10 +30,11 @@ export default function ({ params }: { params: Promise<{ id: string }> }) {
 
     useEffect(() => {
         if (reserva) {
-            console.log('entrei')
-            setNovaData(reserva.dataReserva);
-            setNovaHoraInicio(reserva.horaInicio);
-            setNovaHoraFim(reserva.horaFim);
+            const formatDate = (date: Date) => date.toISOString().split('T')[0];
+            const formatTime = (date: Date) => date.toISOString().split('T')[1].substring(0, 5);
+            setNovaData(formatDate(new Date(reserva.dataReserva )));
+            setNovaHoraInicio(formatTime( new Date(reserva.horaInicio)));
+            setNovaHoraFim(formatTime( new Date(reserva.horaFim)));
         }
     }, [reserva]);
 
