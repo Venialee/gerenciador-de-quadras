@@ -4,7 +4,7 @@ import TableList from "@/components/TableList";
 import { useReserva } from "@/context/ReservaContext";
 
 export interface ReservaInterface {
-    idreserva: number,
+    idReserva: number,
     idQuadra: number,
     dataReserva: string,
     horaInicio: number,
