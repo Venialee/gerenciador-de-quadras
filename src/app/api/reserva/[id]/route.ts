@@ -49,7 +49,7 @@ export async function DELETE(req: NextApiRequest, { params }: { params: { id: st
 export async function PATCH(req: NextRequest, context: { params: { id: string } }) {
     try {
         const { id } = await context.params;
-        const { status } = await req.json();
+        const { status, updateInfos} = await req.json();
         const idReserva = parseInt(id, 10);
 
         if (isNaN(idReserva) || (status !== 1 && status !== 2)) {
@@ -92,7 +92,7 @@ export async function PATCH(req: NextRequest, context: { params: { id: string } 
                     { message: 'Não é possível aprovar: já existe uma reserva neste horário' },
                     { status: 409 }
                 );
-            }
+            }reservaAtual
         }
 
         const reserva = await prisma.reserva.update({

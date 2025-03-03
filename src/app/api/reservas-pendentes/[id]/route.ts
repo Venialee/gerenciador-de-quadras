@@ -207,7 +207,17 @@ export async function PATCH(
                 horaFim: formattedHoraFim,
             },
         });
-
+       
+         if(existingReserva){
+           const t = await  prisma.evento.update({
+                 where: { idEvento: updatedReserva.idEvento  || undefined },
+                 data: {
+                     nome: data.evento.nome,
+                     descricao: data.evento.descricao, // Fixed typo
+                     organizador: data.evento.organizador
+                 }})
+         }
+                
         const formattedResponse = {
             idReserva: updatedReserva.idReserva,
             idQuadra: updatedReserva.idQuadra,
