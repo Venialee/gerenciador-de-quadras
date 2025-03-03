@@ -105,7 +105,7 @@ export default function Table({ reserva, displayEditButton = false }: TableProps
             <div className="flex flex-col sm:flex-row justify-center mt-4 gap-2">
                 {showButton()}
                 {displayEditButton === true ? (
-                    <Link href={`/minhas-reservas/${reserva.idreserva}`} scroll={false}>
+                    <Link href={`/minhas-reservas/${reserva.idReserva}`} scroll={false}>
                         <Button  content="Editar" variation="lightBlue" />
                     </Link>
                 ) : null}
