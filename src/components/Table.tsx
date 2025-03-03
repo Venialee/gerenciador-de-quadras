@@ -29,12 +29,14 @@ export default function Table({ reserva, displayEditButton = false }: TableProps
         if (reserva.status === 0 && currentUser?.tipo === 'admin') {
             return (
                 <>
-                    <Button content="Aprovar reserva" variation="backgroundYellow" onClick={() => {
-                        handleAlterarStatusReserva(reserva, 1);
-                    }} />
-                    <Button content="Cancelar reserva" variation="lightOrange" onClick={() => {
-                        handleAlterarStatusReserva(reserva, 2);
-                    }} />
+                    <div className="flex flex-col sm:flex-row md:gap-2">
+                        <Button content="Aprovar" variation="backgroundYellow" onClick={() => {
+                            handleAlterarStatusReserva(reserva, 1);
+                        }} />
+                        <Button content="Cancelar" variation="lightOrange" onClick={() => {
+                            handleAlterarStatusReserva(reserva, 2);
+                        }} />
+                    </div>
                 </>
             );
         }
@@ -66,33 +68,33 @@ export default function Table({ reserva, displayEditButton = false }: TableProps
     };
 
     return (
-        <div className="w-auto flex flex-col items-center m-8">
-            <table className="border-collapse border border-gray-400 m-2">
+        <div className="w-full flex flex-col items-center m-2">
+            <table className="border-collapse border border-gray-400 m-2 w-full max-w-4xl">
                 <thead>
-                    <tr>
-                        <th className="border border-gray-400 p-2">Data</th>
-                        <th className="border border-gray-400 p-2">Hora Inicial</th>
-                        <th className="border border-gray-400 p-2">Hora Final</th>
-                        <th className="border border-gray-400 p-2">Status</th>
+                    <tr className="bg-complementYellow">
+                        <th className="border border-gray-400 p-2 text-darkBlue font-bold">Data</th>
+                        <th className="border border-gray-400 p-2 text-darkBlue font-bold">Hora Inicial</th>
+                        <th className="border border-gray-400 p-2 text-darkBlue font-bold">Hora Final</th>
+                        <th className="border border-gray-400 p-2 text-darkBlue font-bold">Status</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td className="border border-gray-400 p-2">{formatDate(reserva.dataReserva)}</td>
-                        <td className="border border-gray-400 p-2">{formatTime(reserva.horaInicio)}</td>
-                        <td className="border border-gray-400 p-2">{formatTime(reserva.horaFim)}</td>
-                        <td className="border border-gray-400 p-2">{setReservaStatus()}</td>
+                    <tr className="bg-backgroundYellow">
+                        <td className="text-center border border-gray-400 p-2 text-darkBlue">{formatDate(reserva.dataReserva)}</td>
+                        <td className="text-center border border-gray-400 p-2 text-darkBlue">{formatTime(reserva.horaInicio)}</td>
+                        <td className="text-center border border-gray-400 p-2 text-darkBlue">{formatTime(reserva.horaFim)}</td>
+                        <td className="text-center border border-gray-400 p-2 text-darkBlue">{setReservaStatus()}</td>
                     </tr>
                     {reserva.idEvento !== null ?
                         <>
-                            <tr className="border border-gray-400 p-2">
-                                <td className="w-full">Evento: {reserva.evento?.nome ?? 'N/A'}</td>
+                            <tr className="bg-backgroundYellow">
+                                <td className="border border-gray-400 p-2 text-darkBlue font-b" colSpan={4}><span className="font-bold">Evento:</span> {reserva.evento?.nome ?? 'N/A'}</td>
                             </tr>
-                            <tr className="border border-gray-400 p-2">
-                                <td className="w-full">Organizador do Evento: {reserva.evento?.organizador ?? 'N/A'}</td>
+                            <tr className="bg-backgroundYellow">
+                                <td className="border border-gray-400 p-2 text-darkBlue font-b" colSpan={4}><span className="font-bold">Organizador do Evento:</span> {reserva.evento?.organizador ?? 'N/A'}</td>
                             </tr>
-                            <tr className="border border-gray-400 p-2">
-                                <td className="w-full">Descrição: {reserva.evento?.descricao ?? 'N/A'}</td>
+                            <tr className="bg-backgroundYellow">
+                                <td className="border border-gray-400 p-2 text-darkBlue font-b" colSpan={4}><span className="font-bold">Descrição:</span> {reserva.evento?.descricao ?? 'N/A'}</td>
                             </tr>
                         </>
                         :
@@ -100,13 +102,13 @@ export default function Table({ reserva, displayEditButton = false }: TableProps
                     }
                 </tbody>
             </table>
-            <div className="justify-between w-full flex max-w-[371px]">
+            <div className="flex flex-col sm:flex-row justify-center mt-4 gap-2">
                 {showButton()}
-                {displayEditButton === true ? <Link href={`/minhas-reservas/${reserva.idreserva}`} scroll={false}>
-                    <button className="bg-blue-500 text-white px-4 py-2 rounded">
-                        Editar Reserva
-                    </button>
-                </Link> : null}
+                {displayEditButton === true ? (
+                    <Link href={`/minhas-reservas/${reserva.idreserva}`} scroll={false}>
+                        <Button  content="Editar" variation="lightBlue" />
+                    </Link>
+                ) : null}
             </div>
         </div>
     );

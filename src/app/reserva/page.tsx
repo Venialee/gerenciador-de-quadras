@@ -68,26 +68,25 @@ export default function Reservas() {
 
     return (
         <>
-            <h1>Reservar Quadra</h1>
-            <Box>
-                <GenericInput type="date" label="Data" mandatory={true} value={data} onChange={setData} />
-                <GenericInput type="time" label="Hora Inicio" mandatory={true} value={horaInicio} onChange={setHoraInicio} />
-                <GenericInput type="time" label="Hora Fim" mandatory={true} value={horaFim} onChange={setHoraFim} />
-                <GenericInput type="text" label="Nome do Evento" value={nomeEvento} onChange={setNomeEvento} />
-                <GenericInput type="text" label="Descrição do Evento" value={descricaoEvento} onChange={setDescricaoEvento} />
-                <GenericInput type="text" label="Organizador do Evento" value={organizadorEvento} onChange={setOrganizadorEvento} />
-                <div>
-                    <button
-                        onClick={() => setMostrarPopup(true)}
-                        className="text-red-500 p-0 m-0"
-                    >
-                        Conferir regras da quadra
-                    </button>
-
-                    {mostrarPopup && <RegrasPopup onClose={() => setMostrarPopup(false)} />}
+            <div className="min-h-screen flex justify-center items-center bg-darkBlue bg-[url('/logomarca_fundo.svg')] bg-center bg-no-repeat">
+                <div className="flex flex-col items-center w-full max-w-md p-8 rounded-lg sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl">
+                    <div className="flex flex-col w-full">
+                        <GenericInput type="date" label="" value={data} onChange={setData} placeholder="Data" icon={<img src="/calendar.svg" alt="Ícone de data" className="h-5 w-5 text-darkBlue" />} />
+                        <GenericInput type="time" label="" value={horaInicio} onChange={setHoraInicio} placeholder="Hora Inicio" icon={<img src="/clock.svg" alt="Ícone de hora inicio" className="h-5 w-5 text-darkBlue" />} />
+                        <GenericInput type="time" label="" value={horaFim} onChange={setHoraFim} placeholder="Hora Fim" icon={<img src="/clock.svg" alt="Ícone de hora fim" className="h-5 w-5 text-darkBlue" />} />
+                        <GenericInput type="text" label="" value={nomeEvento} onChange={setNomeEvento} placeholder="Nome do Evento" icon={<img src="/calendar-day.svg" alt="Ícone de evento" className="h-5 w-5 text-darkBlue" />} />
+                        <GenericInput type="text" label="" value={descricaoEvento} onChange={setDescricaoEvento} placeholder="Descrição do Evento" icon={<img src="/message.svg" alt="Ícone de descrição" className="h-5 w-5 text-darkBlue" />} />
+                        <GenericInput type="text" label="" value={organizadorEvento} onChange={setOrganizadorEvento} placeholder="Organizador do Evento" icon={<img src="/perfil.svg" alt="Ícone de organizador" className="h-5 w-5 text-darkBlue" />} />
+                        <div>
+                            <button onClick={() => setMostrarPopup(true)} className="text-complementYellow p-0 m-0">
+                                Conferir regras da quadra
+                            </button>
+                            {mostrarPopup && <RegrasPopup onClose={() => setMostrarPopup(false)} />}
+                        </div>
+                        <Button content="Reservar" onClick={() => handleClick()} />
+                    </div>
                 </div>
-                <Button content="Reservar" onClick={() => handleClick()} />
-            </Box>
+            </div>
         </>
     )
 }
