@@ -32,6 +32,7 @@ export default function ({ params }: { params: Promise<{ id: string }> }) {
 
     useEffect(() => {
         if (reserva) {
+            console.log('entrei')
             setNovaData(reserva.dataReserva);
             setNovaHoraInicio(reserva.horaInicio);
             setNovaHoraFim(reserva.horaFim);

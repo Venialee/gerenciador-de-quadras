@@ -76,7 +76,7 @@ export function ReservaProvider({ children }: { children: ReactNode }) {
 
     const handleDeleteReserva = async (reserva: ReservaInterface) => {
         try {
-            const res = await fetch(`/api/reserva/${reserva.idreserva}`, {
+            const res = await fetch(`/api/reserva/${reserva.idReserva}`, {
                 method: 'DELETE',
             })
 
@@ -84,9 +84,9 @@ export function ReservaProvider({ children }: { children: ReactNode }) {
 
             if (res.ok) {
                 console.log("Reserva deletada com sucesso", data);
-                setReservasPendentes((prev) => prev.filter((r) => r.idreserva !== reserva.idreserva));
-                setReservasAprovadas((prev) => prev.filter((r) => r.idreserva !== reserva.idreserva));
-                setReservasCanceladas((prev) => prev.filter((r) => r.idreserva !== reserva.idreserva));
+                setReservasPendentes((prev) => prev.filter((r) => r.idReserva !== reserva.idReserva));
+                setReservasAprovadas((prev) => prev.filter((r) => r.idReserva !== reserva.idReserva));
+                setReservasCanceladas((prev) => prev.filter((r) => r.idReserva !== reserva.idReserva));
             } else {
                 console.error("Erro ao deletar reserva", data);
                 return null;
@@ -99,19 +99,19 @@ export function ReservaProvider({ children }: { children: ReactNode }) {
     }
 
     const handleAlterarStatusReserva = async (reserva: ReservaInterface, status: number) => {
-        if (!reserva || !reserva.idreserva) {
+        if (!reserva || !reserva.idReserva) {
             console.error("Erro: ID da reserva não informado corretamente.");
             return;
         }
 
-        const idreserva = reserva.idreserva;
-        console.log("ID da reserva recebido:", idreserva);
+        const idReserva = reserva.idReserva;
+        console.log("ID da reserva recebido:", idReserva);
 
         try {
-            const response = await fetch(`/api/reserva/${idreserva}`, {
+            const response = await fetch(`/api/reserva/${idReserva}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ idreserva, status }),
+                body: JSON.stringify({ idReserva, status }),
             });
 
             const data = await response.json();
@@ -128,11 +128,11 @@ export function ReservaProvider({ children }: { children: ReactNode }) {
             console.log('Reserva atualizada:', data);
 
             if (status === 1) {
-                setReservasPendentes((prev) => prev.filter((r) => r.idreserva !== idreserva));
+                setReservasPendentes((prev) => prev.filter((r) => r.idReserva !== idReserva));
                 setReservasAprovadas((prev) => [...prev, { ...reserva, status }]);
             }
             else if (status === 2) {
-                setReservasPendentes((prev) => prev.filter((r) => r.idreserva !== idreserva));
+                setReservasPendentes((prev) => prev.filter((r) => r.idReserva !== idReserva));
                 setReservasCanceladas((prev) => [...prev, { ...reserva, status }]);
             }
         } catch (error) {
