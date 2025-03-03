@@ -12,8 +12,8 @@ export default function ({ params }: { params: Promise<{ id: string }> }) {
 
     const { id } = use(params);
 
-    const reserva = reservasPendentes.find(reserva => reserva.idreserva === Number(id));
-
+    const reserva = reservasPendentes.find(reserva => reserva.idReserva === Number(id));
+    console.log('rv',reserva)
     const [novaData, setNovaData] = useState(reserva?.dataReserva || "");
     const [novaHoraInicio, setNovaHoraInicio] = useState(reserva?.horaInicio || "");
     const [novaHoraFim, setNovaHoraFim] = useState(reserva?.horaFim || "");

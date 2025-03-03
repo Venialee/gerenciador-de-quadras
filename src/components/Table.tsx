@@ -102,7 +102,7 @@ export default function Table({ reserva, displayEditButton = false }: TableProps
             </table>
             <div className="justify-between w-full flex max-w-[371px]">
                 {showButton()}
-                {displayEditButton === true ? <Link href={`/minhas-reservas/${reserva.idreserva}`} scroll={false}>
+                {displayEditButton === true ? <Link href={`/minhas-reservas/${reserva.idReserva}`} scroll={false}>
                     <button className="bg-blue-500 text-white px-4 py-2 rounded">
                         Editar Reserva
                     </button>

@@ -91,7 +91,7 @@ async function main() {
                 nome: 'Admin',
                 sobrenome: 'User',
                 email: 'admin@example.com',
-                senha: 'securepassword',
+                senha: '123',
                 CPF: '123' 
             },
             { 
@@ -100,7 +100,7 @@ async function main() {
                 nome: 'Aluno',
                 sobrenome: 'Teste',
                 email: 'aluno@example.com',
-                senha: 'studentpassword',
+                senha: '123',
                 CPF: '123' 
             },
         ],

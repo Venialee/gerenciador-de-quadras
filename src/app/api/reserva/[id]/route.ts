@@ -7,10 +7,10 @@ const prisma = new PrismaClient();
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
     try {
         const { id } = await params;
-        const idreserva = Number(id);
+        const idReserva = Number(id);
 
         const reserva = await prisma.reserva.findUnique({
-            where: { idreserva: idreserva },
+            where: { idReserva: idReserva },
         });
 
         if (!reserva) {
@@ -34,7 +34,7 @@ export async function DELETE(req: NextApiRequest, { params }: { params: { id: st
     try {
         const reserva = await prisma.reserva.delete({
             where: {
-                idreserva: id
+                idReserva: id
             }
         });
         return NextResponse.json({ message: "Reserva deletado com sucesso", reserva });
@@ -50,14 +50,14 @@ export async function PATCH(req: NextRequest, context: { params: { id: string } 
     try {
         const { id } = await context.params;
         const { status } = await req.json();
-        const idreserva = parseInt(id, 10);
+        const idReserva = parseInt(id, 10);
 
-        if (isNaN(idreserva) || (status !== 1 && status !== 2)) {
+        if (isNaN(idReserva) || (status !== 1 && status !== 2)) {
             return NextResponse.json({ message: 'Parâmetros inválidos' }, { status: 400 });
         }
 
         const reservaAtual = await prisma.reserva.findUnique({
-            where: { idreserva: idreserva },
+            where: { idReserva: idReserva },
         });
 
         if (!reservaAtual) {
@@ -70,7 +70,7 @@ export async function PATCH(req: NextRequest, context: { params: { id: string } 
                     idQuadra: reservaAtual.idQuadra,
                     dataReserva: reservaAtual.dataReserva,
                     status: 1,
-                    idreserva: { not: idreserva }
+                    idReserva: { not: idReserva }
                 },
             });
 
@@ -96,7 +96,7 @@ export async function PATCH(req: NextRequest, context: { params: { id: string } 
         }
 
         const reserva = await prisma.reserva.update({
-            where: { idreserva: idreserva },
+            where: { idReserva: idReserva },
             data: { status },
         });
 
@@ -110,18 +110,18 @@ export async function PATCH(req: NextRequest, context: { params: { id: string } 
 // export async function PATCH(req: NextRequest, context: { params: { id: string } }) {
 //     try {
 //         const { id } = context.params;
-//         const idreserva = parseInt(id, 10);
+//         const idReserva = parseInt(id, 10);
 //         const requestData = await req.json();
 
-//         console.log("ID da reserva:", idreserva);
+//         console.log("ID da reserva:", idReserva);
 //         console.log("Dados recebidos:", requestData);
 
-//         if (isNaN(idreserva)) {
+//         if (isNaN(idReserva)) {
 //             return NextResponse.json({ message: 'ID da reserva inválido' }, { status: 400 });
 //         }
 
 //         const reservaAtual = await prisma.reserva.findUnique({
-//             where: { idreserva: idreserva },
+//             where: { idReserva: idReserva },
 //         });
 
 //         if (!reservaAtual) {
@@ -144,7 +144,7 @@ export async function PATCH(req: NextRequest, context: { params: { id: string } 
 //             }
 
 //             const reserva = await prisma.reserva.update({
-//                 where: { idreserva: idreserva },
+//                 where: { idReserva: idReserva },
 //                 data: { status },
 //             });
 
@@ -184,7 +184,7 @@ export async function PATCH(req: NextRequest, context: { params: { id: string } 
 //             try {
 //                 // Atualizar a reserva
 //                 const reservaAtualizada = await prisma.reserva.update({
-//                     where: { idreserva },
+//                     where: { idReserva },
 //                     data: updateData,
 //                 });
 
@@ -217,18 +217,18 @@ export async function PATCH(req: NextRequest, context: { params: { id: string } 
 // export async function PATCH(req: NextRequest, context: { params: { id: string } }) {
 //     try {
 //         const { id } = context.params;
-//         const idreserva = parseInt(id, 10);
+//         const idReserva = parseInt(id, 10);
 //         const requestData = await req.json();
 
-//         console.log("ID da reserva:", idreserva);
+//         console.log("ID da reserva:", idReserva);
 //         console.log("Dados recebidos:", requestData);
 
-//         if (isNaN(idreserva)) {
+//         if (isNaN(idReserva)) {
 //             return NextResponse.json({ message: 'ID da reserva inválido' }, { status: 400 });
 //         }
 
 //         const reservaAtual = await prisma.reserva.findUnique({
-//             where: { idreserva: idreserva },
+//             where: { idReserva: idReserva },
 //         });
 
 //         if (!reservaAtual) {
@@ -251,7 +251,7 @@ export async function PATCH(req: NextRequest, context: { params: { id: string } 
 //             }
 
 //             const reserva = await prisma.reserva.update({
-//                 where: { idreserva: idreserva },
+//                 where: { idReserva: idReserva },
 //                 data: { status },
 //             });
 
@@ -292,7 +292,7 @@ export async function PATCH(req: NextRequest, context: { params: { id: string } 
 //             try {
 //                 // Atualizar a reserva
 //                 const reservaAtualizada = await prisma.reserva.update({
-//                     where: { idreserva },
+//                     where: { idReserva },
 //                     data: updateData,
 //                 });
 

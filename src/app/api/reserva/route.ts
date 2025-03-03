@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
             });
 
             console.log("Evento criado:", eventoCriado);
-            idEvento = eventoCriado.idevento;
+            idEvento = eventoCriado.idEvento;
         }
 
         const reserva = await prisma.reserva.create({
