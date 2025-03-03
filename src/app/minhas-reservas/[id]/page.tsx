@@ -12,19 +12,26 @@ export default function ({ params }: { params: Promise<{ id: string }> }) {
 
     const { id } = use(params);
 
-    const reserva = reservasPendentes.find(reserva => reserva.idreserva === Number(id));
-
+    const reserva = reservasPendentes.find(reserva => reserva.idReserva === Number(id));
     const [novaData, setNovaData] = useState(reserva?.dataReserva || "");
     const [novaHoraInicio, setNovaHoraInicio] = useState(reserva?.horaInicio || "");
     const [novaHoraFim, setNovaHoraFim] = useState(reserva?.horaFim || "");
+    const [novoNomeEvento, setNovoNomeEvento] = useState(reserva?.evento?.nome );
+    const [novaDescricao, setnovaDescricao] = useState(reserva?.evento?.descricao );
+    const [novoOrganizador, setnovoOrganizador] = useState(reserva?.evento?.organizador );
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState("");
 
     useEffect(() => {
         if (reserva) {
-            setNovaData(reserva.dataReserva);
-            setNovaHoraInicio(reserva.horaInicio);
-            setNovaHoraFim(reserva.horaFim);
+            const formatDate = (date: Date) => date.toISOString().split('T')[0];
+            const formatTime = (date: Date) => date.toISOString().split('T')[1].substring(0, 5);
+            setNovaData(formatDate(new Date(reserva.dataReserva )));
+            setNovaHoraInicio(formatTime( new Date(reserva.horaInicio)));
+            setNovaHoraFim(formatTime( new Date(reserva.horaFim)));
+            setNovoNomeEvento(reserva?.evento?.nome)
+            setnovaDescricao(reserva?.evento?.descricao)
+            setnovoOrganizador(reserva?.evento?.organizador)
         }
     }, [reserva]);
 
@@ -54,6 +61,11 @@ export default function ({ params }: { params: Promise<{ id: string }> }) {
                     dataReserva: novaData,
                     horaInicio: novaHoraInicio,
                     horaFim: novaHoraFim,
+                    evento : {
+                        nome: novoNomeEvento,
+                        descricao: novaDescricao,
+                        organizador: novoOrganizador
+                    }
                 }),
             });
 

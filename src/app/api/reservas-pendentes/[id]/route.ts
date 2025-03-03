@@ -31,7 +31,7 @@ export async function GET(
         // Query the database for the specific reservation with status 0 (pending)
         const reserva = await prisma.reserva.findFirst({
             where: {
-                idreserva: id,
+                idReserva: id,
                 status: 0,
             },
             include: {
@@ -47,7 +47,7 @@ export async function GET(
         }
 
         const formattedReserva = {
-            idreserva: reserva.idreserva,
+            idReserva: reserva.idReserva,
             idQuadra: reserva.idQuadra,
             idEvento: reserva.idEvento || undefined,
             idUsuario: reserva.idUsuario,
@@ -91,7 +91,7 @@ export async function GET(
 //         // Check if the reservation exists and is pending
 //         const existingReserva = await prisma.reserva.findFirst({
 //             where: {
-//                 idreserva: id,
+//                 idReserva: id,
 //                 status: 0, // Only pending reservations can be edited
 //             },
 //         });
@@ -121,7 +121,7 @@ export async function GET(
 
 //         const updatedReserva = await prisma.reserva.update({
 //             where: {
-//                 idreserva: id,
+//                 idReserva: id,
 //             },
 //             data: {
 //                 dataReserva: formattedDataReserva,
@@ -131,7 +131,7 @@ export async function GET(
 //         });
 
 //         const formattedResponse = {
-//             idreserva: updatedReserva.idreserva,
+//             idReserva: updatedReserva.idReserva,
 //             idQuadra: updatedReserva.idQuadra,
 //             idEvento: updatedReserva.idEvento || undefined,
 //             idUsuario: updatedReserva.idUsuario,
@@ -169,7 +169,7 @@ export async function PATCH(
         // Check if the reservation exists and is pending
         const existingReserva = await prisma.reserva.findFirst({
             where: {
-                idreserva: id,
+                idReserva: id,
                 status: 0, // Only pending reservations can be edited
             },
         });
@@ -199,7 +199,7 @@ export async function PATCH(
 
         const updatedReserva = await prisma.reserva.update({
             where: {
-                idreserva: id,
+                idReserva: id,
             },
             data: {
                 dataReserva: formattedDataReserva,
@@ -207,9 +207,19 @@ export async function PATCH(
                 horaFim: formattedHoraFim,
             },
         });
-
+       
+         if(existingReserva){
+           const t = await  prisma.evento.update({
+                 where: { idEvento: updatedReserva.idEvento  || undefined },
+                 data: {
+                     nome: data.evento.nome,
+                     descricao: data.evento.descricao, // Fixed typo
+                     organizador: data.evento.organizador
+                 }})
+         }
+                
         const formattedResponse = {
-            idreserva: updatedReserva.idreserva,
+            idReserva: updatedReserva.idReserva,
             idQuadra: updatedReserva.idQuadra,
             idEvento: updatedReserva.idEvento || undefined,
             idUsuario: updatedReserva.idUsuario,
