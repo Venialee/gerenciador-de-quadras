@@ -16,6 +16,9 @@ export default function ({ params }: { params: Promise<{ id: string }> }) {
     const [novaData, setNovaData] = useState(reserva?.dataReserva || "");
     const [novaHoraInicio, setNovaHoraInicio] = useState(reserva?.horaInicio || "");
     const [novaHoraFim, setNovaHoraFim] = useState(reserva?.horaFim || "");
+    const [novoNomeEvento, setNovoNomeEvento] = useState(reserva?.evento?.nome );
+    const [novaDescricao, setnovaDescricao] = useState(reserva?.evento?.descricao );
+    const [novoOrganizador, setnovoOrganizador] = useState(reserva?.evento?.organizador );
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState("");
     // dayjs.extend(utc);
@@ -35,6 +38,9 @@ export default function ({ params }: { params: Promise<{ id: string }> }) {
             setNovaData(formatDate(new Date(reserva.dataReserva )));
             setNovaHoraInicio(formatTime( new Date(reserva.horaInicio)));
             setNovaHoraFim(formatTime( new Date(reserva.horaFim)));
+            setNovoNomeEvento(reserva?.evento?.nome)
+            setnovaDescricao(reserva?.evento?.descricao)
+            setnovoOrganizador(reserva?.evento?.organizador)
         }
     }, [reserva]);
 
@@ -64,6 +70,11 @@ export default function ({ params }: { params: Promise<{ id: string }> }) {
                     dataReserva: novaData,
                     horaInicio: novaHoraInicio,
                     horaFim: novaHoraFim,
+                    evento : {
+                        nome: novoNomeEvento,
+                        descricao: novaDescricao,
+                        organizador: novoOrganizador
+                    }
                 }),
             });
 
@@ -100,6 +111,24 @@ export default function ({ params }: { params: Promise<{ id: string }> }) {
                     Hora Fim:
                     <input type="time" className="border p-2 w-full" value={novaHoraFim} onChange={(e) => setNovaHoraFim(e.target.value)} />
                 </label>
+                {reserva?.evento ?(
+                    <>
+                        <label className="block mb-4">
+                        Nome evento:
+                        <input type="text" className="border p-2 w-full" value={novoNomeEvento} onChange={(e) => setNovoNomeEvento(e.target.value)} />
+                        </label>
+                        <label className="block mb-4">
+                        Descricao evento:
+                        <input type="text" className="border p-2 w-full" value={novaDescricao} onChange={(e) => setnovaDescricao(e.target.value)} />
+                        </label>
+                        <label className="block mb-4">
+                        Organizador evento:
+                        <input type="text" className="border p-2 w-full" value={novoOrganizador} onChange={(e) => setnovoOrganizador(e.target.value)} />
+                        </label>
+                    </>
+                ): (<p className="block mb-4">voce não cadastrou evento</p>)}
+               
+
                 <div className="flex justify-between">
                     <button
                         onClick={handleSubmit}
@@ -120,4 +149,5 @@ export default function ({ params }: { params: Promise<{ id: string }> }) {
         </div>
     );
 }
-
+               
+                
