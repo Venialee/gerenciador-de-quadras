@@ -21,6 +21,7 @@ export default function ({ params }: { params: Promise<{ id: string }> }) {
     const [novoOrganizador, setnovoOrganizador] = useState(reserva?.evento?.organizador );
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState("");
+    const hasEvents = novoNomeEvento || novaDescricao || novoOrganizador;
 
     useEffect(() => {
         if (reserva) {
@@ -32,6 +33,7 @@ export default function ({ params }: { params: Promise<{ id: string }> }) {
             setNovoNomeEvento(reserva?.evento?.nome)
             setnovaDescricao(reserva?.evento?.descricao)
             setnovoOrganizador(reserva?.evento?.organizador)
+            
         }
     }, [reserva]);
 
@@ -62,10 +64,10 @@ export default function ({ params }: { params: Promise<{ id: string }> }) {
                     horaInicio: novaHoraInicio,
                     horaFim: novaHoraFim,
                     evento : {
-                        nome: novoNomeEvento,
-                        descricao: novaDescricao,
-                        organizador: novoOrganizador
-                    }
+                        nome: novoNomeEvento || null,
+                        descricao: novaDescricao || null,
+                        organizador: novoOrganizador || null
+                    } 
                 }),
             });
 
@@ -117,6 +119,41 @@ export default function ({ params }: { params: Promise<{ id: string }> }) {
                     mandatory
                     variant="editReserva"
                 />
+  <div className="p-4">
+            {!hasEvents ? (
+                <p className="text-gray-500">voice nao cadastrou eventos</p>
+            ) : (
+                <>
+                    <GenericInput
+                        label="Nome evento"
+                        type="text"
+                        value={novoNomeEvento || ''}
+                        onChange={setNovoNomeEvento}
+                        icon={<img src="/message.svg" alt="Ícone de nome" className="h-5 w-5 text-darkBlue" />}
+                        mandatory
+                        variant="editReserva"
+                    />
+                    <GenericInput
+                        label="Descrição evento"
+                        type="text"
+                        value={novaDescricao|| ''}
+                        onChange={setnovaDescricao}
+                        icon={<img src="/message.svg" alt="Ícone de descrição" className="h-5 w-5 text-darkBlue" />}
+                        mandatory
+                        variant="editReserva"
+                    />
+                    <GenericInput
+                        label="Organizador evento"
+                        type="text"
+                        value={novoOrganizador|| ''}
+                        onChange={setnovoOrganizador}
+                        icon={<img src="/message.svg" alt="Ícone de organizador" className="h-5 w-5 text-darkBlue" />}
+                        mandatory
+                        variant="editReserva"
+                    />
+                </>
+            )}
+        </div>
                 <div className="flex justify-between">
                     <button
                         onClick={handleSubmit}

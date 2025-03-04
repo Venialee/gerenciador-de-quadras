@@ -208,7 +208,7 @@ export async function PATCH(
             },
         });
        
-         if(existingReserva){
+         if(existingReserva && updatedReserva.idEvento &&( data.evento.nome || data.evento.descricao || data.evento.organizador)){
            const t = await  prisma.evento.update({
                  where: { idEvento: updatedReserva.idEvento  || undefined },
                  data: {
