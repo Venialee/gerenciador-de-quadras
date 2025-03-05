@@ -1,0 +1,50 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
+
+export async function GET() {
+    const usuarios = await prisma.usuario.findMany();
+
+    const usuariosComTelefone = usuarios.map(usuario => ({
+        ...usuario,
+        telefone: usuario.telefone.toString()
+    }));
+
+    return NextResponse.json(usuariosComTelefone);
+}
+
+export async function POST(req: NextRequest) {
+    try {
+        const { email, senha } = await req.json();
+
+        if (!email || !senha) {
+            return NextResponse.json({ message: 'Email e senha são obrigatórios' }, { status: 400 });
+        }
+
+        const user = await prisma.usuario.findFirst({
+            where: {
+                email: email
+            },
+            include: {
+                aluno: true,
+                administrador: true
+            }
+        });
+
+        if (user && user.senha === senha) {
+            return NextResponse.json({
+                idUsuario: user.idUsuario,
+                email: user.email,
+                nome: user.nome,
+                sobrenome: user.sobrenome,
+                tipo: user.administrador ? "admin" : user.aluno ? "aluno" : "usuario",
+            }, { status: 200 });
+        } else {
+            return NextResponse.json({ message: 'Usuário ou senha incorretos' }, { status: 401 });
+        }
+    } catch (error) {
+        console.error('Erro ao processar a requisição:', error);
+        return NextResponse.json({ message: 'Erro interno no servidor' }, { status: 500 });
+    }
+}

@@ -1,0 +1,103 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Cidade {
+  idCidade Int        @id 
+  nome     String     @db.VarChar(100)
+  UF       String     @db.VarChar(2)
+  endereco Endereco[]
+}
+
+model Endereco {
+  idEndereco  Int      @id 
+  idCidade    Int
+  logradouro  String   @db.VarChar(100)
+  bairro      String   @db.VarChar(100)
+  CEP         String   @db.VarChar(100)
+  numero      Int
+  complemento String?  @db.VarChar(100)
+  cidade      Cidade   @relation(fields: [idCidade], references: [idCidade])
+  quadra      Quadra[]
+}
+
+model Quadra {
+  idQuadra    Int           @id 
+  idEndereco  Int
+  nome        String        @db.VarChar(100)
+  capacidade  Int
+  endereco    Endereco      @relation(fields: [idEndereco], references: [idEndereco])
+  reserva     Reserva[]
+  quadraRegra QuadraRegra[]
+}
+
+model Evento {
+  idEvento    Int       @id @default(autoincrement())
+  nome        String    @db.VarChar(100)
+  descricao   String?   @db.VarChar(100)
+  organizador String    @db.VarChar(100)
+  reserva     Reserva[]
+}
+
+model Usuario {
+  idUsuario     Int            @id @default(autoincrement())
+  telefone      BigInt
+  nome          String         @db.VarChar(100)
+  sobrenome     String         @db.VarChar(100)
+  email         String         @db.VarChar(100)
+  senha         String         @db.VarChar(100)
+  CPF           String         @db.VarChar(11)
+  reserva       Reserva[]
+  administrador Administrador?
+  aluno         Aluno?
+}
+
+model Reserva {
+  idReserva   Int      @id @default(autoincrement())
+  idQuadra    Int
+  idEvento    Int?
+  idUsuario   Int
+  dataReserva DateTime @db.Date
+  horaInicio  DateTime @db.Time
+  horaFim     DateTime @db.Time
+  status      Int      @db.SmallInt
+  quadra      Quadra   @relation(fields: [idQuadra], references: [idQuadra])
+  evento      Evento?  @relation(fields: [idEvento], references: [idEvento])
+  usuario     Usuario  @relation(fields: [idUsuario], references: [idUsuario])
+}
+
+model Administrador {
+  idAdministrador Int     @id
+  chaveAcesso     String  @db.VarChar(100)
+  usuario         Usuario @relation(fields: [idAdministrador], references: [idUsuario])
+}
+
+model Aluno {
+  idAluno   Int     @id
+  matricula String  @db.VarChar(100)
+  usuario   Usuario @relation(fields: [idAluno], references: [idUsuario])
+}
+
+model Regra {
+  idRegra     Int           @id 
+  descricao   String        @db.VarChar(100)
+  nome        String        @db.Char(50)
+  quadraRegra QuadraRegra[]
+}
+
+model QuadraRegra {
+  idRegra  Int
+  idQuadra Int
+  regra    Regra  @relation(fields: [idRegra], references: [idRegra])
+  quadra   Quadra @relation(fields: [idQuadra], references: [idQuadra])
+
+  @@id([idRegra, idQuadra])
+}
